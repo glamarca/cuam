@@ -1,0 +1,31 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET         /                           controllers.home.HomeManagement.index
+
+#Users
+GET         /user                       controllers.user.UserManagement.userIndex
+GET         /user/showUser              controllers.user.UserManagement.showUser(id : Int)
+GET         /user/userForm              controllers.user.UserManagement.showUserForm(id : Option[Int])
+GET         /user/deleteUser            controllers.user.UserManagement.deleteUser(id : Int)
+
+POST        /user/findUser              controllers.user.UserManagement.findUser
+POST        /user/userFormSubmit        controllers.user.UserManagement.updateCreateUser
+
+#Roles
+GET         /role                       controllers.role.RoleManagement.roleIndex
+GET         /role/showRole              controllers.role.RoleManagement.showRole(id : Int)
+GET         /role/roleForm              controllers.role.RoleManagement.showRoleForm(id : Option[Int])
+GET         /role/deleteRole            controllers.role.RoleManagement.deleteRole(id : Int)
+
+POST        /role/findRole              controllers.role.RoleManagement.findRole
+POST        /role/roleFormSubmit        controllers.role.RoleManagement.updateCreateRole
+
+#Groups
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET         /assets/*file                                                                      controllers.Assets.at(path="/public", file)
+GET         /webjars/*file                                                                     controllers.WebJarAssets.at(file)

@@ -1,0 +1,85 @@
+@(userForm: Form[controllers.user.UserForm])(action: String)
+    @breadCrumb = {
+        /<a href="/user">@Messages("users")</a>
+        /<a href="#"><b>@action</b></a>
+    }
+    @main()(breadCrumb) {
+        <div class="container">
+            @if(userForm.hasGlobalErrors) {
+                <div class="alert alert-warning" roleView="alert">
+                    <ul>
+                    @for(error <- userForm.globalErrors) {
+                        <li>@error.message</li>
+                    }
+                    </ul>
+                </div>
+            }
+            <div class="panel panel-default">
+                <div class="panel-heading">@action</div>
+                <div class="panel-body">
+                    <form id="UserForm" action="user/userFormSubmit" method="POST">
+                        <div class="row">
+                            <div class=col-md-6>
+                                <div class="form-group">
+                                @helper.inputText(userForm("userName"), '_label -> Messages("userName"), '_id -> "userName", 'class -> "form-control", 'maxlenght -> 25, 'required -> true,'_showConstraints -> false)
+                                </div>
+                            </div>
+                            <div class=col-md-6>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class=col-md-6>
+                                <div class="form-group">
+                                @helper.inputText(userForm("lastName"), '_label -> Messages("lastName"), '_id -> "lastName", 'class -> "form-control", 'maxlenght -> 25, 'required -> true,'_showConstraints -> false)
+                                </div>
+                            </div>
+                            <div class=col-md-6>
+                                <div class="form-group">
+                                @helper.inputText(userForm("firstName"), '_label -> Messages("firstName"), '_id -> "firstName", 'class -> "form-control", 'maxlenght -> 25, 'required -> true,'_showConstraints -> false)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class=col-md-6>
+                                <div class="form-group">
+                                @helper.inputText(userForm("email"), '_label -> Messages("email"), '_id -> "email", 'class -> "form-control", 'maxlenght -> 25, 'required -> true,
+                                    '_showConstraints -> false,'onblur -> "testEquivalence(%s,%s,%s,%s);".format("'input#email'","'input#emailControl'","'div#emailsEqualityError'","'"+Messages("emailsNonEquivalents")+"'"))
+                                </div>
+                            </div>
+                            <div class=col-md-6>
+                                <div class="form-group">
+                                    <label for ="emailControl">@Html(Messages("emailConfirmation"))</label>
+                                    <input type="text" class="form-control" id="emailControl" required="true"
+                                    onblur="testEquivalence('input#email','input#emailControl','div#emailsEqualityError','@Messages("nonEqualsEmails")');"/>
+                                    <div id="emailsEqualityError" class="help-block with-errors" style="display:none"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class=col-md-6>
+                                <div class="form-group">
+                                @helper.inputPassword(userForm("password"), '_label -> Messages("password"), '_id -> "password", 'class -> "form-control", 'maxlenght -> 25, 'required -> true,
+                                    '_showConstraints -> false,'onblur -> "testEquivalence(%s,%s,%s,%s);".format("'input#password'","'input#passwordUtilisateurControle'","'div#passwordsEqualityError'","'"+Messages("nonEqualsPasswords")+"'"))
+                                </div>
+                            </div>
+                            <div class=col-md-6>
+                                <div class="form-group">
+                                    <div class="form-group">
+                                        <label for ="passwordControl">@Html(Messages("passwordConfirmation"))</label>
+                                        <input type="password" class="form-control" id="passwordControl" required="true"
+                                        onblur="testEquivalence('input#password','input#passwordControl','div#passwordsEqualityError','@Messages("nonEqualsPasswords")');"/>
+                                    </div>
+                                    <div id="passwordsEqualityError" class="help-block with-errors" style="display:none"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <input type="submit" id="userFormSubmitButton" onclick="validateUserForm();" class="btn btn-primary" value="@Messages("save")"/>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }

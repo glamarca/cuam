@@ -1,0 +1,45 @@
+@(userForm: controllers.user.UserForm)
+    @breadCrumb = {
+        /<a href="/user">@Messages("users")</a>
+        /<a href="#"><b>@Messages("user")</b></a>
+    }
+@main()(breadCrumb) {
+    <div class="container">
+        <h3><span class="label label-primary">@userForm.lastName.get @userForm.firstName.get</span></h3>
+        <br/>
+        <div class="media">
+            <div class="media-left">
+                <a href="#">
+                    <img class="media-object" src="@routes.Assets.at("images/user.png")" alt="@Messages("picture")"/>
+                </a>
+            </div>
+            <div class="media-body">
+                <div class="col-md-10 col-md-offset-1">
+                    <div class="row">
+                        <div class="col-md-6">
+                            @Messages("userName") : @userForm.userName.get
+                        </div>
+                        <div class="col-md-6">
+                            @Messages("email") : @userForm.email.get
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            @Messages("lastName") : @userForm.lastName.get
+                        </div>
+                        <div class="col-md-6">
+                            @Messages("firstName") : @userForm.firstName.get
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/>
+        <div class="row">
+            <div class="col-md2 col-md-offset-5">
+                <a class="btn btn-default btn-primary" href="/user/userForm?id=@userForm.userId.get">@Messages("update")</a>
+                <a class="btn btn-default" href="/user/deleteUser?id=@userForm.userId.get">@Messages("delete")</a>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,56 @@
+#A
+add=Ajouter
+applicationName=Common Users and Authorizations Management
+
+#B
+
+#C
+creationDate=Date de création
+
+#D
+delete=Effacer
+description=Description
+
+#E
+email=eMail
+emailConfirmation=Confirmation eMail
+
+#F
+firstName=Prénom
+
+#G
+groups=Groupes
+groupsIncludingRoleList=Liste des groupes dont fait partie la permission
+
+#L
+lastName=Nom
+
+#M
+messageFooterCompany=@Company
+messageFooterContact=@Contact
+
+#N
+name=Nom
+nonEqualsEmails=Les deux eMail ne correspondent pas.
+nonEqualsPasswords=Les deux mots de passe ne correspondent pas.
+
+#P
+password=Mot de Passe
+passwordConfirmation=Confirmation du mot de passe
+
+#R
+refName=Nom de référence
+roles=Permissions
+role=Permission
+
+#S
+save=Enregistrer
+search=Rechercher
+searching=Recherche
+
+#U
+update=Modifier
+user=Utilisateur
+userName=Nom d''utilisateur
+users=Utilisateurs
+

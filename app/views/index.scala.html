@@ -1,0 +1,24 @@
+@()
+    @breadCrumb = {
+        <p></p>
+    }
+    @main()(breadCrumb) {
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-3-offset">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">@Messages("features")</h3>
+                        </div>
+                        <div class="panel-body">
+                            <ul class="nav nav-pills nav-stacked">
+                                <li roleView="presentation"><a href="/user" class="list-group-item">@Messages("users")</a></li>
+                                <li roleView="presentation"><a href="/role" class="list-group-item">@Messages("roles")</a></li>
+                                <li roleView="presentation"><a href="/group" class="list-group-item">@Messages("groups")</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
