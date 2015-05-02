@@ -1,2 +1,35 @@
 #A
 applicationName=Common Users and Authorisations Management
+add=Add
+creationDate=Creation Date
+delete=Delete
+description=Description
+email=eMail
+emailConfirmation=eMail confirmation
+firstName=First Name
+groups=Groups
+groupsIncludingPermissionList=Groups containing the permission
+lastName=Last Name
+name=Name
+nonEqualsEmails=The two emails are not equals
+nonEqualsPasswords=The two passwords are not equals
+password=Password
+passwordConfirmation=Password confirmation
+refName=Reference name
+permissions=Permissions
+permission=Permission
+save=Save
+search=Search
+searching=Search
+update=Update
+user=User
+userName=User name
+users=Users
+userCreation=User creation
+userUpdate=User update
+messageFooterLicence=<a href="http://www.apache.org/licenses/LICENSE-2.0.html" style="text-decoration:none;color:#F7E0B1">Apache License 2.0</a>
+messageFooterContact=<a href="https://github.com/glamarca/cuam"style="text-decoration:none;color:#F7E0B1">Sources</a>
+permissionCreation=Permission creation
+permissionExist=A permission with the same name or reference name already exists.
+permissionUpdate=Permission update
+userExist=A user with the same user name or email already exists.

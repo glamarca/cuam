@@ -17,31 +17,30 @@ limitations under the License.
 /**
  * @author
  */
-package models.entity.user
+package models.entity.permission
 
 import java.sql.Date
 
 import play.api.db.slick.Profile
 
-trait UserComponent { this : Profile =>
+
+trait PermissionComponent { this : Profile =>
   import profile.simple._
 
-  class Users(tag: Tag) extends Table[(User)](tag, "USER") {
+  class Permissions(tag: Tag) extends Table[(Permission)](tag, "PERMISSION") {
 
     def id: Column[Int] = column[Int]("ID", O.PrimaryKey, O.AutoInc)
-    def userName : Column[String] = column[String]("USER_NAME",O.NotNull)
-    def password : Column[String] = column[String]("PASSWORD",O.NotNull)
-    def lastName : Column[String] = column[String]("LASTNAME")
-    def firstName : Column[String] = column[String]("FIRSTNAME")
-    def email : Column[String] = column[String]("EMAIL",O.NotNull)
+    def name : Column[String] = column[String] ("NAME",O.NotNull)
+    def refName : Column[String] = column[String] ("REF_NAME",O.NotNull)
     def creationDate : Column[Date] = column[Date]("CREATION_DATE",O.NotNull)
-    def updateDate : Column[Date] = column[Date]("MODIFICATION_DATE",O.NotNull)
+    def description : Column[String] = column[String]("DESCRIPTION",O.Nullable)
+    def modificationDate : Column[Date] = column[Date]("MODIFICATION_DATE",O.NotNull)
     def updatingUser : Column[String] = column[String]("UPDATING_USER",O.NotNull)
 
-    override def * = (id.?,userName,password,lastName.?,firstName.?,email,creationDate,updateDate,updatingUser) <>(User.tupled, User.unapply)
+    override def * = (id.?,name,refName,creationDate,description.?,modificationDate,updatingUser) <>(Permission.tupled, Permission.unapply)
 
   }
 
 }
 
-case class User(id : Option[Int],userName : String,password : String,lastName : Option[String],firstName : Option[String],email : String,creationDate : Date,updateDate : Date,updatingUser : String)
+case class Permission(id : Option[Int],name : String,refName : String,creationDate : Date,description : Option[String],modificationDate : Date,updatingUser : String)

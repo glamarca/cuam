@@ -1,0 +1,64 @@
+@*
+Copyright 2015 La Marca Gaëtan
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*@
+@(permissionForm : Form[models.entity.permission.Permission])(action : String)
+    @breadCrumb = {
+    /<a href="/permission">@Messages("permissions")</a>
+    /<a href="#"><b>@action</b></a>
+}
+@main()(breadCrumb){
+    <div class="container">
+        @if(permissionForm.hasGlobalErrors) {
+            <div class="alert alert-warning" permissionView="alert">
+                <ul>
+                @for(error <- permissionForm.globalErrors) {
+                    <li>@error.message</li>
+                }
+                </ul>
+            </div>
+        }
+        <div class="panel panel-default">
+            <div class="panel-heading">@action</div>
+            <div class="panel-body">
+                <form permissionView="form" id="permissionForm" action="/permission/permissionFormSubmit" method="POST">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                            @helper.inputText(permissionForm("name"), '_label -> Messages("name"), '_id -> "name", 'class -> "form-control", 'maxlenght -> 25, 'required -> true,'_showConstraints -> false)
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                            @helper.inputText(permissionForm("refName"), '_label -> Messages("refName"), '_id -> "refName", 'class -> "form-control", 'maxlenght -> 45, 'required -> true,'_showConstraints -> false)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                @helper.textarea(permissionForm("description"),'_label -> Messages("description"), '_id -> "description", 'class -> "form-control",'cols -> 50,'rows -> 4, 'maxlenght -> 25, 'required -> true,'_showConstraints -> false)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <input type="submit" value="@Messages("save")" class="btn btn-default btn-primary"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}

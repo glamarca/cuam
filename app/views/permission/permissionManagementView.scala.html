@@ -1,6 +1,21 @@
-@(rolesList : Option[List[models.entity.role.Role]])
+@*
+Copyright 2015 La Marca Gaëtan
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*@
+@(permissionsList : Option[List[models.entity.permission.Permission]])
     @breadCrumb = {
-        /<a href="#"><b>@Messages("roles")</b></a>
+        /<a href="#"><b>@Messages("permissions")</b></a>
     }
 @main()(breadCrumb) {
     <div class="container">
@@ -10,7 +25,7 @@
                 <div class="row">
                     <div class="col-md-10 col-md-offset-1">
                         <form id="searchForm" name="searchForm"
-                        method="Post" action="/role/roleFormSubmit"
+                        method="Post" action="/permission/findPermission"
                         class="form" autocomplete="on">
                             <div class="col-md-10">
                                 <div class="col-md-3 col-md-offset-2">
@@ -31,7 +46,7 @@
                                     </button>
                                 </div>
                                 <div class="col-md-1 text-center">
-                                    <a href="/role/roleForm" class="btn btn-default" id="addButton" aria-label="@Messages("add")" style="margin-top : 25px">
+                                    <a href="/permission/permissionForm" class="btn btn-default" id="addButton" aria-label="@Messages("add")" style="margin-top : 25px">
                                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                                     </a>
                                 </div>
@@ -41,7 +56,7 @@
                 </div>
             </div>
         </div>
-        @if(rolesList.isDefined && !rolesList.get.isEmpty) {
+        @if(permissionsList.isDefined && !permissionsList.get.isEmpty) {
             <div class="panel panel-default">
                 <div class="panel-body">
                     <div class="table-responsive">
@@ -49,15 +64,15 @@
                             <tr>
                                 <th>@Messages("name")</th>
                                 <th>@Messages("refName")</th>
-                                <th>@Messages("descritpion")</th>
+                                <th>@Messages("description")</th>
                                 <th>@Messages("creationDate")</th>
                             </tr>
-                            @rolesList.get.map { role =>
+                            @permissionsList.get.map { permission =>
                                 <tr>
-                                    <td><a href="role/showRole?id=@role.id.get" style="text-decoration : no-underline">@role.name</a></td>
-                                    <td>@role.refName</td>
-                                    <td>@role.description.getOrElse("")</td>
-                                    <td>@role.creationDate</td>
+                                    <td><a href="/permission/showPermission?id=@permission.id.get" style="text-decoration : no-underline">@permission.name</a></td>
+                                    <td>@permission.refName</td>
+                                    <td>@permission.description.getOrElse("")</td>
+                                    <td>@permission.creationDate</td>
                                 </tr>
                             }
                         </table>

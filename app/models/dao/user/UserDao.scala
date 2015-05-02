@@ -1,3 +1,22 @@
+/*
+Copyright 2015 La Marca Gaëtan
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+/**
+ * @author
+ */
 package models.dao.user
 
 import controllers.user.UserForm
@@ -15,7 +34,7 @@ class UserDao(override val profile: JdbcProfile) extends UserComponent with Prof
 object userDao {
   val dao = new UserDao(Config.driver)
 
-  def search(userName: Column[Option[String]],
+  def find(userName: Column[Option[String]],
                  password: Column[Option[String]],
                  lastname: Column[Option[String]],
                  firstName: Column[Option[String]],
@@ -23,22 +42,17 @@ object userDao {
     dao.users filter { u =>
       Case.If(password.isDefined).Then(u.password === password).Else(Some(true)) &&
         Case.If(userName.isDefined).Then(u.userName === userName).Else(Some(true)) &&
-        Case.If(lastname.isDefined).Then(u.lastname === lastname).Else(Some(true)) &&
+        Case.If(lastname.isDefined).Then(u.lastName === lastname).Else(Some(true)) &&
         Case.If(firstName.isDefined).Then(u.firstName === firstName).Else(Some(true)) &&
         Case.If(email.isDefined).Then(u.email === email).Else(Some(true))
     }
 
-  def searchByUserEmailPassword(userName : Column[Option[String]],email : Column[Option[String]],password : Column[String]) =
-  dao.users filter { u =>
-      Case.If(userName.isDefined).Then(u.userName === userName).Else(Some(true)) ||
-      Case.If(email.isDefined).Then(u.email === email).Else(Some(true)) &&
-        (u.password === password)
-  }
+  def findByForm(userForm: UserForm) = find(userForm.userName, userForm.password,userForm.lastName,userForm.firstName,userForm.email)
 
-  def searchByForm(userForm: UserForm) = search(userForm.userName, userForm.password,userForm.lastName,userForm.firstName,userForm.email)
+  def findById(id: Int) = dao.users filter (u => u.id === id)
 
-  def searchById(id: Int) = dao.users filter (u => u.id === id)
+  def nameOrEmaiMatch(userName : String,email : String) = dao.users filter (u => u.userName === userName || u.email === email)
 
-  def serachByUserNameOrEmailAndPassword(userName : Option[String],eMail : Option[String],password : String) = searchByUserEmailPassword(userName,eMail,password)
+  def findByUserName(userName : String) = dao.users filter (u => u.userName === userName)
 
 }

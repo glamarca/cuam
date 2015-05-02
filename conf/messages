@@ -20,14 +20,14 @@ firstName=Prénom
 
 #G
 groups=Groupes
-groupsIncludingRoleList=Liste des groupes dont fait partie la permission
+groupsIncludingPermissionList=Liste des groupes dont fait partie la permission
 
 #L
 lastName=Nom
 
 #M
-messageFooterCompany=@Company
-messageFooterContact=@Contact
+messageFooterLicence=<a href="http://www.apache.org/licenses/LICENSE-2.0.html" style="text-decoration:none;color:#F7E0B1">Apache License 2.0</a>
+messageFooterContact=<a href="https://github.com/glamarca/cuam"style="text-decoration:none;color:#F7E0B1">Sources</a>
 
 #N
 name=Nom
@@ -40,8 +40,11 @@ passwordConfirmation=Confirmation du mot de passe
 
 #R
 refName=Nom de référence
-roles=Permissions
-role=Permission
+permission=Permission
+permissionCreation=Création d''une permission
+permissionExist=Une permission portant le même nom ou nom de référence existe déjà.
+permissions=Permissions
+permissionUpdate=Modification d''une permission
 
 #S
 save=Enregistrer
@@ -51,6 +54,9 @@ searching=Recherche
 #U
 update=Modifier
 user=Utilisateur
+userCreation=Création d''un utilisateur
+userExist=Un utilisateur portant le même nom d'utilisateur ou email existe déjà.
 userName=Nom d''utilisateur
 users=Utilisateurs
+userUpdate=Modification d''un utilisateur
 

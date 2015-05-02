@@ -1,27 +1,41 @@
+#Copyright 2015 La Marca Gaëtan
+
+#Licensed under the Apache License, Version 2.0 (the "License");
+#you may not use this file except in compliance with the License.
+#You may obtain a copy of the License at
+
+#http://www.apache.org/licenses/LICENSE-2.0
+
+#Unless required by applicable law or agreed to in writing, software
+#distributed under the License is distributed on an "AS IS" BASIS,
+#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#See the License for the specific language governing permissions and
+#limitations under the License.
+
 # Routes
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
 # Home page
-GET         /                           controllers.home.HomeManagement.index
+GET         /                                       controllers.home.HomeManagement.index
 
 #Users
-GET         /user                       controllers.user.UserManagement.userIndex
-GET         /user/showUser              controllers.user.UserManagement.showUser(id : Int)
-GET         /user/userForm              controllers.user.UserManagement.showUserForm(id : Option[Int])
-GET         /user/deleteUser            controllers.user.UserManagement.deleteUser(id : Int)
+GET         /user                                   controllers.user.UserManagement.userIndex
+GET         /user/showUser                          controllers.user.UserManagement.showUser(id : Int)
+GET         /user/userForm                          controllers.user.UserManagement.showUserForm(id : Option[Int])
+GET         /user/deleteUser                        controllers.user.UserManagement.deleteUser(id : Int)
 
-POST        /user/findUser              controllers.user.UserManagement.findUser
-POST        /user/userFormSubmit        controllers.user.UserManagement.updateCreateUser
+POST        /user/findUser                          controllers.user.UserManagement.findUser
+POST        /user/userFormSubmit                    controllers.user.UserManagement.updateCreateUser
 
-#Roles
-GET         /role                       controllers.role.RoleManagement.roleIndex
-GET         /role/showRole              controllers.role.RoleManagement.showRole(id : Int)
-GET         /role/roleForm              controllers.role.RoleManagement.showRoleForm(id : Option[Int])
-GET         /role/deleteRole            controllers.role.RoleManagement.deleteRole(id : Int)
+#Permissions
+GET         /permission                             controllers.permission.PermissionManagement.permissionIndex
+GET         /permission/showPermission              controllers.permission.PermissionManagement.showPermission(id : Int)
+GET         /permission/permissionForm              controllers.permission.PermissionManagement.showPermissionForm(id : Option[Int])
+GET         /permission/deletePermission            controllers.permission.PermissionManagement.deletePermission(id : Int)
 
-POST        /role/findRole              controllers.role.RoleManagement.findRole
-POST        /role/roleFormSubmit        controllers.role.RoleManagement.updateCreateRole
+POST        /permission/findPermission              controllers.permission.PermissionManagement.findPermission
+POST        /permission/permissionFormSubmit        controllers.permission.PermissionManagement.updateCreatePermission
 
 #Groups
 

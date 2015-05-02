@@ -1,24 +1,39 @@
-@(role: models.entity.role.Role,groupsList : Option[List[models.entity.group.Group]])
+@*
+Copyright 2015 La Marca Gaëtan
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*@
+@(permission: models.entity.permission.Permission,groupsList : Option[List[models.entity.group.Group]])
     @breadCrumb = {
-        /<a href="/role">@Messages("roles")</a>
-        /<a href="#"><b>@Messages("role")</b></a>
+        /<a href="/permission">@Messages("permissions")</a>
+        /<a href="#"><b>@Messages("permission")</b></a>
     }
 @main()(breadCrumb) {
     <div class="container">
-        <h3><span class="label label-primary">@role.name</span></h3>
+        <h3><span class="label label-primary">@permission.name</span></h3>
         <div class="panel panel-default">
             <div class="panel-body">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
                             <b>@Messages("name")</b><br/>
-                            @role.name
+                            @permission.name
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <b>@Messages("refName")</b><br/>
-                            @role.refName
+                            @permission.refName
                         </div>
                     </div>
                 </div>
@@ -26,27 +41,27 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <b>@Messages("description")</b><br/>
-                            @role.description
+                            @permission.description
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <b>@Messages("creationDate")</b><br/>
-                            @role.creationDate
+                            @permission.creationDate
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12 text-center">
-                        <a href="/role/roleForm?id=@role.id.get" class="btn btn-default btn-primary">@Messages("update")</a>
-                        <a href="/role/deleteRole?id=@role.id.get" class="btn btn-default">@Messages("delete")</a>
+                        <a href="/permission/permissionForm?id=@permission.id.get" class="btn btn-default btn-primary">@Messages("update")</a>
+                        <a href="/permission/deletePermission?id=@permission.id.get" class="btn btn-default">@Messages("delete")</a>
                     </div>
                 </div>
                 <br/>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="list-group">
-                            <h4 class="list-group-item-heading">@Messages("groupsIncludingRoleList")</h4>
+                            <h4 class="list-group-item-heading">@Messages("groupsIncludingPermissionList")</h4>
                             @if(groupsList.isDefined && !groupsList.isEmpty) {
                                 @groupsList.get.map { g =>
                                     <p class="list-group-item-text"><a href="group/showGroup?id=@g.id">@g.name</a></p>

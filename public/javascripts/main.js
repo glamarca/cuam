@@ -8,12 +8,12 @@ errorColor = "#FF0000"
  * @param errorMmessage Le message d'erreur à afficher
  * @returns {boolean} True si la verification est OK, false sinon
  */
-function testEquivalence(element1CssDescriptor, element2CssDescriptor,errorMessageElementDescriptor,errorMmessage) {
+function testEquivalence(element1CssDescriptor, element2CssDescriptor, errorMessageElementDescriptor, errorMmessage) {
     element1 = document.querySelector(element1CssDescriptor)
     element2 = document.querySelector(element2CssDescriptor)
     erroElement = document.querySelector(errorMessageElementDescriptor)
     if (element1 !== null && element1.value !== null && element1.value !== ""
-        && element2 !== null&& element2.value !== null && element2.value !== ""
+        && element2 !== null && element2.value !== null && element2.value !== ""
         && element1.value !== element2.value) {
         element2.style.border = "thin solid " + errorColor;
         erroElement.innerHTML = errorMmessage
@@ -34,8 +34,13 @@ function testEquivalence(element1CssDescriptor, element2CssDescriptor,errorMessa
  * @param messageErreurPassword Le message d'erreur de non equivalence des deux champs mot de passe
  * @returns {boolean|*} True si la verification est Ok.
  */
-function validateUserForm(messageErreurEmail,messageErreurPassword){
-    verificationEmail = testEquivalence("input#email","input#emailControl","div#emailsEqualityError",messageErreurEmail)
-    verificationPassword = testEquivalence("input#password","input#passwordUtilisateurControle","div#passwordsEqualityError",messageErreurPassword)
-    return verificationEmail &&  verificationPassword;
+function validateUserForm(messageErreurEmail, messageErreurPassword) {
+    verificationEmail = testEquivalence("input#email", "input#emailControl", "div#emailsEqualityError", messageErreurEmail)
+    if (document.querySelector("input#password") !== null) {
+        verificationPassword = testEquivalence("input#password", "input#passwordUtilisateurContpermission", "div#passwordsEqualityError", messageErreurPassword)
+    }
+    else{
+        verificationPassword = true;
+    }
+    return verificationEmail && verificationPassword;
 }
