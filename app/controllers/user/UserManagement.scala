@@ -1,5 +1,5 @@
 /*
-Copyright 2015 La Marca Gaëtan
+Copyright 2015 Gaëtan La Marca
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ limitations under the License.
  */
 package controllers.user
 
+import models.dao.permission.permissionDao
 import models.dao.user.userDao
 import models.entity.user.User
 import play.api.Play.current
@@ -30,7 +31,6 @@ import play.api.i18n.Messages
 import play.api.mvc.{Action, Controller}
 import views.html.user._
 import org.mindrot.jbcrypt.BCrypt
-
 
 object UserManagement extends Controller {
 
@@ -45,20 +45,45 @@ object UserManagement extends Controller {
     )(UserForm.apply)(UserForm.unapply)
   )
 
+  /**
+   * Index page of the users management
+   * @return The serach page for users.
+   */
   def userIndex = Action { implicit request =>
     Ok(userManagementView(userForm, None))
   }
 
+  /**
+   * Show the user view fillled with the user informations found with the user id.
+   * @param id The id of the user we look for
+   * @return The user view filled with the user information
+   */
   def showUser(id: Int) = DBAction { implicit request =>
     val user = (userDao.findById(id)).list.head
-    val userProfileForm = UserForm(user.id, Some(user.userName), user.lastName, user.firstName,None,Some(user.email))
+    val userProfileForm = UserForm(user.id, Some(user.userName), user.lastName, user.firstName, None, Some(user.email))
     Ok(userView(userProfileForm))
   }
 
+  /**
+   * Show the form used to create or update a user.
+   *
+   * If the id is not defined , the creation form is sent :
+   * - The password field is shown and mandatory
+   * - The action is set to creation
+   * - The form is initialized to an empty form
+   *
+   * If the id is defined , the update form is sent :
+   * - The password field is not rendered
+   * - The action is set to update
+   * - The form is filled with the user information retrieved with the user id
+   *
+   * @param id The id of the user if not new , none if new
+   * @return The user form initilised for the action
+   */
   def showUserForm(id: Option[Int]) = DBAction { implicit request =>
     if (id.isDefined) {
       val user = (userDao.findById(id.get)).list.head
-      val form = userForm fill (UserForm(user.id, Some(user.userName), user.lastName, user.firstName,None, Some(user.email)))
+      val form = userForm fill (UserForm(user.id, Some(user.userName), user.lastName, user.firstName, None, Some(user.email)))
       Ok(UserFormView(form)(Messages("userUpdate")))
     }
     else {
@@ -66,41 +91,60 @@ object UserManagement extends Controller {
     }
   }
 
-  def addUser(form: UserForm) = DB.withSession { implicit request =>
-    val date = new java.sql.Date(new java.util.Date().getTime())
-    userDao.dao.users += User(None, form.userName.get,BCrypt.hashpw(form.password.get, BCrypt.gensalt), form.lastName, form.firstName, form.email.get, date, date, "user")
-  }
-
-  def updateUser(form: UserForm) = DB.withSession { implicit request =>
-    val user = (userDao.findById(form.userId.get)).list.head
-    val userWithDate = User(user.id, user.userName, user.password, user.lastName, user.firstName, user.email, user.creationDate, new java.sql.Date(new java.util.Date().getTime()), "user")
-    userDao.dao.users.filter(_.id === form.userId).update(userWithDate)
-  }
-
-  def updateCreateUser = DBAction { implicit request =>
+  /**
+   * Update a user with the informations in the form.
+   * If the userName or the email are modified and the new ones are already in use , a message is sent to the user.
+   * @return The user view filled with the updated user informations.
+   */
+  def updateUser = DBAction { implicit request =>
     userForm.bindFromRequest.fold(
       formWithErrors => {
         BadRequest(UserFormView(formWithErrors)(Messages("userUpdate")))
       },
       form => {
-        val userExist = userDao.nameOrEmaiMatch(form.userName.get,form.email.get).list
-        if (!userExist.isEmpty) {
-          BadRequest(UserFormView(userForm.fill(form).withGlobalError(Messages("permissionExist")))(Messages("userUpdate")))
+        val userExist = userDao.nameOrEmaiMatch(form.userName.get, form.email.get).list
+        if (!userExist.isEmpty && userExist(0).id != form.userId) {
+          BadRequest(UserFormView(userForm.fill(form).withGlobalError(Messages("userExists")))(Messages("userUpdate")))
         }
         else {
-          if (form.userId.isDefined) {
-            updateUser(form)
-            Redirect(routes.UserManagement.showUser(form.userId.get))
+          val user = (userDao.findById(form.userId.get)).list.head
+          userDao.findById(form.userId.get).map(u => (u.userName,u.lastName,u.firstName,u.email,u.updateDate,u.updatingUser))
+            .update((form.userName.get,form.lastName.get,form.firstName.get,form.email.get,new java.sql.Date(new java.util.Date().getTime()), "user"))
+          Redirect(routes.UserManagement.showUser(form.userId.get))
           }
-          else {
-            addUser(form)
-            Redirect(routes.UserManagement.showUser(userDao.findByUserName(form.userName.get).first.id.get))
-          }
+      }
+    )
+  }
+
+  /**
+   * Create a user according to the form fields.
+   * If the userName or the email is alreay in use , a message is send to the user.
+   * The password is encrypted using JBCrypt
+   * @return The user view filled with the new user informations.
+   */
+  def createUser = DBAction { implicit request =>
+    userForm.bindFromRequest.fold(
+      formWithErrors => {
+        BadRequest(UserFormView(formWithErrors)(Messages("userCreation")))
+      },
+      form => {
+        val userExist = userDao.nameOrEmaiMatch(form.userName.get, form.email.get).list
+        if (!userExist.isEmpty) {
+          BadRequest(UserFormView(userForm.fill(form).withGlobalError(Messages("userExists")))(Messages("userCreation")))
+        }
+        else {
+          val date = new java.sql.Date(new java.util.Date().getTime())
+          userDao.dao.users += User(None, form.userName.get, BCrypt.hashpw(form.password.get, BCrypt.gensalt), form.lastName, form.firstName, form.email.get, date, date, "user")
+          Redirect(routes.UserManagement.showUser(userDao.findByUserName(form.userName.get).first.id.get))
         }
       }
     )
   }
 
+  /**
+   * Find user according to the form informations.
+   * @return The user search page with the list of users which were found.
+   */
   def findUser = DBAction { implicit request =>
     userForm.bindFromRequest.fold(
       formWithErrors => {
@@ -113,6 +157,11 @@ object UserManagement extends Controller {
     )
   }
 
+  /**
+   * Delete a user
+   * @param id The id of the user to delete
+   * @return The user search page
+   */
   def deleteUser(id: Int) = DBAction { implicit request =>
     userDao.dao.users.filter(_.id === id).mutate(_.delete)
     Ok(userManagementView(userForm, None))

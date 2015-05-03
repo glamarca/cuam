@@ -1,5 +1,5 @@
 /*
-Copyright 2015 La Marca Gaëtan
+Copyright 2015 Gaëtan La Marca
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ limitations under the License.
  */
 package models.dao.permission
 
+import java.util.Locale
+
 import models.entity.permission.PermissionComponent
 import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.{Config, Profile}
@@ -36,17 +38,17 @@ object permissionDao {
 
   def search(name : Column[Option[String]],refName : Column[Option[String]]) =
     dao.permissions filter { p =>
-      Case.If(name.isDefined).Then(p.name === name).Else(Some(true)) &&
-      Case.If(refName.isDefined).Then(p.refName === refName).Else(Some(true))
+      Case.If(name.isDefined).Then(p.name.toUpperCase === name.toUpperCase).Else(Some(true)) &&
+      Case.If(refName.isDefined).Then(p.refName === refName.toUpperCase).Else(Some(true))
   }
 
   def findByNames(name : Option[String],refName : Option[String]) = search(name,refName)
 
   def findById(id : Int) = dao.permissions filter (p => p.id === id)
 
-  def findByRefName(refName: String) = dao.permissions filter (p => p.refName === refName)
+  def findByRefName(refName: String) = dao.permissions filter (p => p.refName === refName.toUpperCase)
 
-  def findByNameOrRefName(name : String , refName : String) = dao.permissions filter (p => p.name === name || p.refName === refName)
+  def findByNameOrRefName(name : String , refName : String) = dao.permissions filter (p => p.name.toUpperCase === name.toUpperCase || p.refName === refName.toUpperCase)
 
 
 }

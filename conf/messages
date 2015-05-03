@@ -43,6 +43,7 @@ refName=Nom de référence
 permission=Permission
 permissionCreation=Création d''une permission
 permissionExist=Une permission portant le même nom ou nom de référence existe déjà.
+permissionManagement=Gestion des permissions
 permissions=Permissions
 permissionUpdate=Modification d''une permission
 
@@ -55,7 +56,8 @@ searching=Recherche
 update=Modifier
 user=Utilisateur
 userCreation=Création d''un utilisateur
-userExist=Un utilisateur portant le même nom d'utilisateur ou email existe déjà.
+userExists=Un utilisateur portant le même nom d'utilisateur ou email existe déjà.
+userManagement=Gestion des utilisateurs
 userName=Nom d''utilisateur
 users=Utilisateurs
 userUpdate=Modification d''un utilisateur

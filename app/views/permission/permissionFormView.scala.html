@@ -1,5 +1,5 @@
 @*
-Copyright 2015 La Marca Gaëtan
+Copyright 2015 Gaëtan La Marca
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ limitations under the License.
         <div class="panel panel-default">
             <div class="panel-heading">@action</div>
             <div class="panel-body">
-                <form permissionView="form" id="permissionForm" action="/permission/permissionFormSubmit" method="POST">
+                <form permissionView="form" id="permissionForm" action="@if(action == Messages("permissionCreation")){/permission/createPermission}else{/permission/updatePermission}" method="POST">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">

@@ -1,5 +1,5 @@
 /*
-Copyright 2015 La Marca Gaëtan
+Copyright 2015 Gaëtan La Marca
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -60,16 +60,15 @@ object PermissionManagement extends Controller {
   )
 
   /**
-   * Page d'accueil de la gestion des permissions
-   * @return Une liste de permissions vide dans la vue recherche
+   * The index page of the permission management
    */
   def permissionIndex = Action { implicit request =>
     Ok(permissionManagementView(None))
   }
 
   /**
-   * Recherche une liste de permission en fonction de "fomulaireRecherche"
-   * @return La Liste des permission trouvées , dans la vue de recherche
+   * Find a list of permition with the criteria provided by the search form
+   * @return The search view with the list of the permissions that where found
    */
   def findPermission = DBAction { implicit request =>
     searchForm.bindFromRequest.fold(
@@ -84,9 +83,8 @@ object PermissionManagement extends Controller {
   }
 
   /**
-   * Permet d'afficher la fiche d'une permission
-   * @param id L'id de la permission
-   * @return La vue de la fiche de permission
+   *Show the permission view.
+   * The view id filled with the information retrievd wit the permission id
    */
   def showPermission(id: Int) = DBAction { implicit request =>
     val permission = permissionDao.findById(id).first
@@ -94,64 +92,56 @@ object PermissionManagement extends Controller {
   }
 
   /**
-   * Mise à jour de la permissiond ans la DB et renvoie de la nouvelle permission
-   * @param permission La permission à mettre à jour
-   * @return La permission mise à jour.
+   * Update a permission with the informations provided by the form.
+   * If the name of the reference name of the permission were updated  and the new ones are already in use , a message is sent to the user.
+   * @return The permission view filled with the updated permissions informations.
    */
-  def updatePermission(permission: Permission): Permission = DB.withSession { implicit request =>
-    permissionDao.findById(permission.id.get).map(p => (p.name, p.refName, p.description, p.modificationDate, p.updatingUser))
-      .update((permission.name, permission.refName.toUpperCase(Locale.ENGLISH), permission.description.orNull, new java.sql.Date(new java.util.Date().getTime), "user"))
-    permissionDao.findById(permission.id.get).first
-  }
-
-  /**
-   * Création d'une permission dans la DB
-   * @param permission La permission à créer
-   * @return La fiche de la permission créée
-   */
-  def createPermission(permission: Permission): Permission = DB.withSession { implicit request =>
-    val permissionWithDate = Permission(None, permission.name, permission.refName.toUpperCase(Locale.ENGLISH), new java.sql.Date(new java.util.Date().getTime()), permission.description, new java.sql.Date(new java.util.Date().getTime()), "user")
-    permissionDao.dao.permissions += permissionWithDate
-    permissionDao.findByRefName(permission.refName).first
-  }
-
-  /**
-   * Permet de lancer la creation ou la modification d'une permission en fonction de "permissionForm"
-   * @return La fiche de la permission crée
-   */
-  def updateCreatePermission = DBAction { implicit request =>
+  def updatePermission = DBAction { implicit request =>
     permissionForm.bindFromRequest.fold(
       formWithError => {
-        BadRequest(permissionFormView(formWithError)(Messages("formError")))
+        BadRequest(permissionFormView(formWithError)(Messages("permissionUpdate")))
       },
-      formulaire => {
-        if (formulaire.id.isDefined) {
-          val permissionExists = permissionDao.findByNameOrRefName(formulaire.name, formulaire.refName).list
-          if (!permissionExists.isEmpty && permissionExists(0).id != formulaire.id) {
-            BadRequest(permissionFormView(permissionForm.fill(formulaire).withGlobalError(Messages("permissionExist")))(Messages("permissionCreation")))
-          }
-          else {
-            val updatedPermission = updatePermission(formulaire)
-            Redirect(routes.PermissionManagement.showPermission(updatedPermission.id.get))
-          }
+      form => {
+        val permissionExists = permissionDao.findByNameOrRefName(form.name, form.refName).list
+        if (!permissionExists.isEmpty && permissionExists(0).id != form.id) {
+          BadRequest(permissionFormView(permissionForm.fill(form).withGlobalError(Messages("permissionExist")))(Messages("permissionUpdate")))
         }
         else {
-          if (!permissionDao.findByNameOrRefName(formulaire.name,formulaire.refName).list.isEmpty) {
-            BadRequest(permissionFormView(permissionForm.fill(formulaire).withGlobalError(Messages("permissionExist")))(Messages("permissionCreation")))
-          }
-          else {
-            val updatedPermission = createPermission(formulaire)
-            Redirect(routes.PermissionManagement.showPermission(updatedPermission.id.get))
-          }
+          permissionDao.findById(form.id.get).map(p => (p.name, p.refName, p.description, p.modificationDate, p.updatingUser))
+            .update((form.name, form.refName.toUpperCase(Locale.ENGLISH), form.description.orNull, new java.sql.Date(new java.util.Date().getTime), "user"))
+          Redirect(routes.PermissionManagement.showPermission(form.id.get))
         }
       }
     )
   }
 
   /**
-   * Supprime une permission
-   * @param id L'id de la permission à supprimer
-   * @return La vue de recherche des permissions
+   * Create a new permission with the informations provided by the form.
+   * If a permission with the same name or reference name already exists , a message is sent to the user.
+   * @return The permission view filled with the new permissions informations.
+   */
+  def createPermission = DBAction { implicit request =>
+    permissionForm.bindFromRequest.fold(
+      formWithError => {
+        BadRequest(permissionFormView(formWithError)(Messages("permissionCreation")))
+      },
+      form => {
+        if (!permissionDao.findByNameOrRefName(form.name, form.refName).list.isEmpty) {
+          BadRequest(permissionFormView(permissionForm.fill(form).withGlobalError(Messages("permissionExist")))(Messages("permissionCreation")))
+        }
+        else {
+          val permissionWithDate = Permission(None, form.name, form.refName.toUpperCase(Locale.ENGLISH), new java.sql.Date(new java.util.Date().getTime()), form.description, new java.sql.Date(new java.util.Date().getTime()), "user")
+          permissionDao.dao.permissions += permissionWithDate
+          Redirect(routes.PermissionManagement.showPermission(permissionDao.findByNameOrRefName(form.name, form.refName).first.id.get))
+        }
+      }
+    )
+  }
+
+  /**
+   * Delete a permission identified by is ID.
+   * @param id The id of the permission to delete.
+   * @return The index page of the permission management.
    */
   def deletePermission(id: Int) = DBAction { implicit request =>
     permissionDao.findById(id).mutate(_.delete)
@@ -159,9 +149,13 @@ object PermissionManagement extends Controller {
   }
 
   /**
-   * Affiche une fiche de permission
-   * @param id L'id de la permission à afficher
-   * @return La vue de la fiche de permission
+   * Show the permission form.
+   *
+   * If the id is defined , the form is filled with the informations retrieved by the id
+   * If the id is not defined , the form is initialized as an empty form.
+   *
+   * @param id The id if it is an uodate , None if it is a creation
+   * @return The permission form view
    */
   def showPermissionForm(id: Option[Int]) = DBAction { implicit request =>
     if (id.isDefined) {

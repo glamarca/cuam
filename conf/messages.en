@@ -32,4 +32,6 @@ messageFooterContact=<a href="https://github.com/glamarca/cuam"style="text-decor
 permissionCreation=Permission creation
 permissionExist=A permission with the same name or reference name already exists.
 permissionUpdate=Permission update
-userExist=A user with the same user name or email already exists.
+permissionManagement=Permissions management
+userExists=A user with rhe same user name or email already exists.
+userManagement=Users management
