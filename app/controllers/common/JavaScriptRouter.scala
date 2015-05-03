@@ -14,9 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-/**
- * @author
- */
 package controllers.common
 
 import play.api.Routes

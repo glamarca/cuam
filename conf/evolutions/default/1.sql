@@ -24,6 +24,10 @@ alter table USER_GROUP drop constraint FK_GROUP_MEMBER_GROUP;
 alter table PERMISSION_GROUP drop constraint FK_PERMISSION_GROUP_GROUP;
 alter table PERMISSION_GROUP drop constraint FK_PERMISSION_GROUP_PERMISSION;
 
+drop index UNAME_INDEX;
+drop index GROUPREF_INDEX;
+drop index PERMISSIONREF_INDEX;
+
 drop table PERMISSION_GROUP;
 drop table USER_GROUP;
 drop table USER;

@@ -32,7 +32,7 @@ limitations under the License.
             <div class="panel panel-default">
                 <div class="panel-heading">@action</div>
                 <div class="panel-body">
-                    <form id="UserForm" action="@if(action==Messages("userCreation")){/user/createUser} else {/user/updateUser}" method="POST">
+                    <form id="UserForm" action="@if(userForm("id").value.isDefined){/user/createUser}else{/user/updateUser}" method="POST">
                         <div class="row">
                             <div class=col-md-6>
                                 <div class="form-group">
@@ -70,7 +70,7 @@ limitations under the License.
                                 </div>
                             </div>
                         </div>
-                        @if(action == Messages("userCreation")) {
+                        @if(userForm("id").value.isDefined) {
                             <div class="row">
                                 <div class=col-md-6>
                                     <div class="form-group">

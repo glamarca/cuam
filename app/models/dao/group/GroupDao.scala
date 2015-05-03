@@ -13,15 +13,64 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
-/**
- * @author
- */
 package models.dao.group
 
-/**
- * Created by sarace on 26/04/15.
- */
-class GroupDao {
+import controllers.group.SearchGroupForm
+import models.entity.group.GroupComponent
+import play.api.db.slick.Config.driver.simple._
+import play.api.db.slick.{Config, Profile}
+
+import scala.slick.driver.JdbcProfile
+import scala.slick.lifted.TableQuery
+
+
+class GroupDao(override val profile: JdbcProfile) extends GroupComponent with Profile {
+  val groups = TableQuery[Groups]
+}
+
+object groupDao {
+  val dao = new GroupDao(Config.driver)
+
+  /**
+   * Generic find method using optionnal values
+   * @param name The column mapped to group name
+   * @param refName The column mapped to group refName
+   * @return A generic query
+   */
+  def find(  name : Column[Option[String]],
+            refName : Column[Option[String]]) =
+  dao.groups.filter { g =>
+    Case.If(name.isDefined).Then(g.name === name).Else((Some(true))) &&
+    Case.If(refName.isDefined).Then(g.refName === refName).Else(Some(true))
+  }
+
+  /**
+   * Find groups with the criteria's provided by the searchForm
+   * @param searchForm The search form
+   * @return The query to find the groups paramerized with the search form infos.
+   */
+  def findBySearchForm(searchForm : SearchGroupForm) = find(searchForm.name,searchForm.refName)
+
+  /**
+   * Find a group by his id
+   * @param id The id of the group
+   * @return The parametrized query to find the group
+   */
+  def findById(id : Int) = dao.groups.filter(_.id === id)
+
+  /**
+   * Find groups that match the name or the refname
+   * @param name The name of the group
+   * @param refName The refName of the group
+   * @return The list of groups that match name or refname
+   */
+  def findByNameOrRefName(name : String,refName : String) = dao.groups filter (g => g.name === name || g.refName === refName)
+
+  /**
+   * Find a permission by refname
+   * @param refName The refname of the permission
+   * @return The query to find the refName
+   */
+  def findByRefName(refName : String) = dao.groups.filter (_.refName === refName)
 
 }

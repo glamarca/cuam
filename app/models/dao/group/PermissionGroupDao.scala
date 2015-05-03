@@ -13,12 +13,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
-/**
- * @author
- */
 package models.dao.group
 
+import models.dao.permission.permissionDao
 import models.entity.group.PermissionGroupComponent
 import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.{Config, Profile}
@@ -34,12 +31,23 @@ object permissionGroupDao {
 
   val dao = new PermissionGroupDao(Config.driver)
 
-  def search(permissionId: Column[Option[Int]], groupId: Column[Option[Int]]) =
-    dao.permissionsGroups filter { p =>
-      Case.If(permissionId.isDefined).Then(p.permissionId === permissionId).Else(Some(true)) &&
-        Case.If(groupId.isDefined).Then(p.groupId === groupId).Else(Some(true))
-    }
+  /**
+   * Find the permissions from a group
+   * @param groupId The group Id
+   * @return The query that find the permissions list
+   */
+  def findPermissions(groupId : Int) = for {
+    permissionGroup <- dao.permissionsGroups if permissionGroup.groupId === groupId
+    permission <- permissionDao.dao.permissions if permission.id === permissionGroup.permissionId
+  } yield permission
 
-  def searchByPermissionGroup(permissionId: Option[Int], groupId: Option[Int]) = search(permissionId, groupId)
-
+  /**
+   * Find the groups where the permission is
+   * @param permissionId The permision Id
+   * @return The query that find the group list
+   */
+  def findGroups(permissionId : Int) = for {
+    permissionGroup <- dao.permissionsGroups if permissionGroup.permissionId === permissionId
+    group <- groupDao.dao.groups if group.id === permissionGroup.groupId
+  } yield group
 }

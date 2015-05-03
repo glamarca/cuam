@@ -20,16 +20,31 @@ limitations under the License.
     @main()(breadCrumb) {
         <div class="container">
             <div class="row">
-                <div class="col-md-6 col-md-3-offset">
+                <div class="col-md-6 col-md-offset-3">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h3 class="panel-title">@Messages("features")</h3>
+                            <h3 class="panel-title">@Messages("mainMenu")</h3>
                         </div>
                         <div class="panel-body">
                             <ul class="nav nav-pills nav-stacked">
-                                <li permissionView="presentation"><a href="/user" class="list-group-item">@Messages("users")</a></li>
-                                <li permissionView="presentation"><a href="/permission" class="list-group-item">@Messages("permissions")</a></li>
-                                <li permissionView="presentation"><a href="/group" class="list-group-item">@Messages("groups")</a></li>
+                                <li role="presentation">
+                                    <a href="/user" class="list-group-item">
+                                        <h4 class="list-group-item-heading">@Messages("users")</h4>
+                                        <p class="list-group-item-text">@Messages("usersManagementDescription")</p>
+                                    </a>
+                                </li>
+                                <li role="presentation">
+                                    <a href="/permission" class="list-group-item">
+                                        <h4 class="list-group-item-heading">@Messages("permissions")</h4>
+                                        <p class="list-group-item-text">@Messages("permissionsManagementDescription")</p>
+                                    </a>
+                                </li>
+                                <li role="presentation">
+                                    <a href="/group" class="list-group-item">
+                                        <h4 class="list-group-item-heading">@Messages("groups")</h4>
+                                        <p class="list-group-item-text">@Messages("groupsManagementDescription")</p>
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </div>

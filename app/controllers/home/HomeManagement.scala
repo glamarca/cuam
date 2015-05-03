@@ -14,16 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-/**
- * @author
- */
 package controllers.home
 
 import play.api.mvc.{Action, Controller}
 
-/**
- * Created by sarace on 25/04/15.
- */
 object HomeManagement extends Controller {
 
   def index = Action {

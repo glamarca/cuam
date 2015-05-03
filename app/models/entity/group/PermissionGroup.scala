@@ -13,23 +13,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
-/**
- * @author
- */
 package models.entity.group
 
 import java.sql.Date
-
 import play.api.db.slick.Profile
 
 
 trait PermissionGroupComponent { this : Profile =>
   import profile.simple._
 
-  class PermissionsGroups(tag: Tag) extends Table[(PermissionGroup)](tag, "ROLE_GROUP") {
+  class PermissionsGroups(tag: Tag) extends Table[(PermissionGroup)](tag, "PERMISSION_GROUP") {
     def id: Column[Int] = column[Int]("ID", O.PrimaryKey, O.AutoInc)
-    def permissionId : Column[Int] = column[Int]("ROLE_ID",O.NotNull)
+    def permissionId : Column[Int] = column[Int]("PERMISSION_ID",O.NotNull)
     def groupId : Column[Int] = column[Int]("GROUP_ID",O.NotNull)
     def added : Column[Date] = column[Date]("ADDED",O.NotNull)
 
