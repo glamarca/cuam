@@ -1,10 +1,7 @@
 logs
 project/project
-project/target
 target
 tmp
-.history
-dist
 /.idea
 /*.iml
 /out
@@ -14,3 +11,9 @@ dist
 /RUNNING_PID
 /.settings
 /h2/*
+
+
+
+
+#Exception
+!h2/.gitignore
