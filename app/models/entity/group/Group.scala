@@ -13,14 +13,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
-/**
- * @author
- */
 package models.entity.group
 
 import java.sql.Date
-
 import play.api.db.slick.Profile
 
 
@@ -33,14 +28,14 @@ trait GroupComponent { this : Profile =>
     def name : Column[String] = column[String]("NAME",O.NotNull)
     def refName : Column[String] = column[String]("REF_NAME",O.NotNull)
     def creationDate : Column[Date] = column[Date]("CREATION_DATE",O.NotNull)
-    def updateDate : Column[Date] = column[Date]("MODIFICATIO_DATE",O.NotNull)
+    def updateDate : Column[Date] = column[Date]("MODIFICATION_DATE",O.NotNull)
     def updatingUser : Column[String] = column[String]("UPDATING_USER",O.NotNull)
-    def descritpion : Column[String] = column[String]("DESCRIPTION")
+    def descritpion : Column[String] = column[String]("DESCRIPTION",O.Nullable)
 
-    override def * = (id.?,name,refName,creationDate,updateDate,updatingUser.?,descritpion.?) <>(Group.tupled, Group.unapply)
+    override def * = (id.?,name,refName,creationDate,updateDate,updatingUser,descritpion.?) <>(Group.tupled, Group.unapply)
 
   }
 
 }
 
-case class Group(id : Option[Int],name : String,refName : String,creationDate : Date,updateDate : Date,updatingUser : Option[String],descritpion : Option[String])
+case class Group(id : Option[Int],name : String,refName : String,creationDate : Date,updateDate : Date,updatingUser : String,description : Option[String])

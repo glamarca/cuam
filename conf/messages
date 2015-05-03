@@ -19,13 +19,20 @@ emailConfirmation=Confirmation eMail
 firstName=Prénom
 
 #G
+group=Groupe
+groupCreation=Création d''un groupe
+groupExists=Un groupe portant le même nom ou nom de référence existe déjà.
 groups=Groupes
 groupsIncludingPermissionList=Liste des groupes dont fait partie la permission
+groupsManagement=Gestion des groupes
+groupsManagementDescription=Gestion des groupes
+groupUpdate=Modification d''un groupe
 
 #L
 lastName=Nom
 
 #M
+mainMenu=Menu principal
 messageFooterLicence=<a href="http://www.apache.org/licenses/LICENSE-2.0.html" style="text-decoration:none;color:#F7E0B1">Apache License 2.0</a>
 messageFooterContact=<a href="https://github.com/glamarca/cuam"style="text-decoration:none;color:#F7E0B1">Sources</a>
 
@@ -43,7 +50,9 @@ refName=Nom de référence
 permission=Permission
 permissionCreation=Création d''une permission
 permissionExist=Une permission portant le même nom ou nom de référence existe déjà.
+permissionsListFromGroup=Liste des permissions du groupe.
 permissionManagement=Gestion des permissions
+permissionsManagementDescription=Gestion des permissions
 permissions=Permissions
 permissionUpdate=Modification d''une permission
 
@@ -57,7 +66,9 @@ update=Modifier
 user=Utilisateur
 userCreation=Création d''un utilisateur
 userExists=Un utilisateur portant le même nom d'utilisateur ou email existe déjà.
+usersListFromGroup=Liste des utilisateurs du groupe
 userManagement=Gestion des utilisateurs
+usersManagementDescription=Gestion des utilisateurs
 userName=Nom d''utilisateur
 users=Utilisateurs
 userUpdate=Modification d''un utilisateur

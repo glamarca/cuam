@@ -67,7 +67,7 @@ object PermissionManagement extends Controller {
   }
 
   /**
-   * Find a list of permition with the criteria provided by the search form
+   * Find a list of permissions with the criteria's provided by the search form
    * @return The search view with the list of the permissions that where found
    */
   def findPermission = DBAction { implicit request =>
@@ -83,8 +83,8 @@ object PermissionManagement extends Controller {
   }
 
   /**
-   *Show the permission view.
-   * The view id filled with the information retrievd wit the permission id
+   * Show the permission view.
+   * The view is filled with the information retrievd wit the permission id
    */
   def showPermission(id: Int) = DBAction { implicit request =>
     val permission = permissionDao.findById(id).first

@@ -13,17 +13,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 *@
-@(permissionForm : Form[models.entity.permission.Permission])(action : String)
+@(groupForm : Form[models.entity.group.Group])(action : String)
     @breadCrumb = {
-    /<a href="/permission">@Messages("permissions")</a>
-    /<a href="#"><b>@action</b></a>
-}
+        /<a href="/group">@Messages("groups")</a>
+        /<a href="#"><b>@action</b></a>
+    }
 @main()(breadCrumb){
     <div class="container">
-        @if(permissionForm.hasGlobalErrors) {
+        @if(groupForm.hasGlobalErrors) {
             <div class="alert alert-warning" permissionView="alert">
                 <ul>
-                @for(error <- permissionForm.globalErrors) {
+                @for(error <- groupForm.globalErrors) {
                     <li>@error.message</li>
                 }
                 </ul>
@@ -32,23 +32,23 @@ limitations under the License.
         <div class="panel panel-default">
             <div class="panel-heading">@action</div>
             <div class="panel-body">
-                <form permissionView="form" id="permissionForm" action="@if(!permissionForm("id").value.isDefined){/permission/createPermission}else{/permission/updatePermission}" method="POST">
+                <form permissionView="form" id="groupForm" action="@if(!groupForm("id").value.isDefined){/group/createGroup}else{/group/updateGroup}" method="POST">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                            @helper.inputText(permissionForm("name"), '_label -> Messages("name"), '_id -> "name", 'class -> "form-control", 'maxlenght -> 25, 'required -> true,'_showConstraints -> false)
+                            @helper.inputText(groupForm("name"), '_label -> Messages("name"), '_id -> "name", 'class -> "form-control", 'maxlenght -> 25, 'required -> true,'_showConstraints -> false)
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                            @helper.inputText(permissionForm("refName"), '_label -> Messages("refName"), '_id -> "refName", 'class -> "form-control", 'maxlenght -> 45, 'required -> true,'_showConstraints -> false)
+                            @helper.inputText(groupForm("refName"), '_label -> Messages("refName"), '_id -> "refName", 'class -> "form-control", 'maxlenght -> 45, 'required -> true,'_showConstraints -> false)
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                @helper.textarea(permissionForm("description"),'_label -> Messages("description"), '_id -> "description", 'class -> "form-control",'cols -> 50,'rows -> 4, 'maxlenght -> 25, 'required -> true,'_showConstraints -> false)
+                            @helper.textarea(groupForm("description"),'_label -> Messages("description"), '_id -> "description", 'class -> "form-control",'cols -> 50,'rows -> 4, 'maxlenght -> 25, 'required -> true,'_showConstraints -> false)
                             </div>
                         </div>
                     </div>

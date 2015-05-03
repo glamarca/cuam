@@ -40,6 +40,14 @@ POST        /permission/createPermission        controllers.permission.Permissio
 POST        /permission/updatePermission        controllers.permission.PermissionManagement.updatePermission
 
 #Groups
+GET         /group                              controllers.group.GroupManagement.groupIndex
+GET         /group/showGroup                    controllers.group.GroupManagement.showGroup(id : Int)
+GET         /group/groupForm                    controllers.group.GroupManagement.showGroupForm(id : Option[Int])
+GET         /group/deleteGroup                  controllers.group.GroupManagement.deleteGroup(id : Int)
+
+POST        /group/findGroup                    controllers.group.GroupManagement.findGroup
+POST        /group/createGroup                  controllers.group.GroupManagement.createGroup
+POST        /group/updateGroup                  controllers.group.GroupManagement.updateGroup
 
 
 # Map static resources from the /public folder to the /assets URL path
