@@ -16,4 +16,4 @@ tmp
 
 
 #Exception
-!h2/.gitignore
+!/h2/.gitignore
