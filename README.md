@@ -1,11 +1,49 @@
 # Common Users and Authorizations Management
 
-This application provide an externalization of the users and authorization management :
+This application uses [Scala](http://www.scala-lang.org/), [Play Framework](https://www.playframework.com/), [Slick](http://slick.typesafe.com/) and [Bootstrap](http://getbootstrap.com/)
 
-1. User creation and update
-2. Permission creation and update
-3. Group creation and update
-4. Assign users to groups
+## [Play Framework](https://www.playframework.com/) Documentation
+Once the application is deployed, you can always access [Play Framework](https://www.playframework.com/) Documentation at [http://localhost:9000/@documentation](http://localhost:9000/@documentation) .
+
+Online documentation : https://www.playframework.com/documentation
+
+## Goal
+
+The goal of this application is to centralize the management of the users and the authorisations of multiple applications.
+It will provide common operations :
+
+1. Users creation and update
+2. Permissions creation and update
+3. Groups creation and update
+4. Applications tags creation and update
+5. Assign users to groups
+6. Assign permissions to groups
+7. Assigns groups and permissions to applications
+8. Connect from applications to DB or Api and retrieve users informations and authorisations
+
+## Current Status : Developement
+
+## Installing
+
+### Download and Install [Activator](https://www.typesafe.com/community/core-tools/activator-and-sbt)
+
+[Activator](https://www.typesafe.com/community/core-tools/activator-and-sbt) is a tool created by [Typesafe](https://www.typesafe.com) to create and develop [Scala](http://www.scala-lang.org/) applications. You can download [Activator](https://www.typesafe.com/community/core-tools/activator-and-sbt) from the following address: https://www.typesafe.com/community/core-tools/activator-and-sbt.
+
+[Activator](https://www.typesafe.com/community/core-tools/activator-and-sbt) use [SBT](http://www.scala-sbt.org/) as build tool and dependencies manager. All [SBT](http://www.scala-sbt.org/) dependencies configuration links can be found on the [MVN Repository](http://mvnrepository.com/) , in the [SBT](http://www.scala-sbt.org/)tab
+
+To install activator, simply unzip the downloaded file and add the absolute path to the new directory in the environment variable `$PATH`. You will be able to run the command `activator` from anywhere in your file system.
+
+### Clone the repository
+
+Clone the repository locally using [Git](http://git-scm.com/downloads):
+
+```
+    $ mkdir projects
+    $ cd projects
+    $ git clone https://github.com/glamarca/cuam
+```
+
+It will create the directory `cuam` where all cloned files will be located.
 
 ### External Database Configuration
 
@@ -42,3 +80,15 @@ $ mysql> CREATE USER '$USER_NAME'@'localhost' IDENTIFIED BY '$USER_PASSWORD';
 ```
 * Edit **Build.scala** file :  
   Replace `"com.h2database" % "h2" % "1.4.187"` by `mysql" % "mysql-connector-java" % "5.1.30`
+
+### Run the Application
+
+To run the application:
+```
+  $ cd cuam
+  $ activator
+
+  [cuam] $ run
+```
+
+  Once the server is started, you can open the application in your browser accessing the address: [http://localhost:9000/](http://localhost:9000/)  
