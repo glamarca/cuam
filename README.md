@@ -91,4 +91,31 @@ To run the application:
   [cuam] $ run
 ```
 
-  Once the server is started, you can open the application in your browser accessing the address: [http://localhost:9000/](http://localhost:9000/)  
+Once the server is started, you can open the application in your browser accessing the address: [http://localhost:9000/](http://localhost:9000/)
+
+## Contributing
+
+To contribute to the project you have to follow the exactly same steps of the previous section, but cloning from your own fork:
+
+1. Login on [GitHub](https://github.com)
+2. Visit the repository at: https://github.com/glamarca/cuam
+3. Click on **Fork** to have your own copy of the project
+
+The new clone url is the one from your own fork:
+
+     $ git clone https://github.com/[your-username]/cuam.git
+
+A few additional commands are necessary to keep your repository in sync with the original. Use `git remote` to link your local repository with the original:
+
+      $ git remote add upstream https://github.com/glamarca/cuam.git
+
+Everytime you want to update your fork with the changes made in the original, run the following commands:
+
+      $ git fetch origin upstream
+      $ git merge upstream/master
+
+The merge was done locally and are not yet on your Github fork. For that, you have to push local modifications to the server:
+
+      $ git push origin master
+
+Contributions to the original repository are done through pull requests. So, make sure you have updated your fork and solved all conflicts before sending your pull requests.
