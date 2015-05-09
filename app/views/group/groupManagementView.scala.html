@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 *@
-@(searchForm : Form[controllers.group.SearchGroupForm],groupsList : Option[List[models.entity.group.Group]])
+@(searchForm : Form[controllers.group.SearchGroupForm],groupsList : Option[List[models.entity.group.Group]],applicationsList : List[models.entity.application.Application])
     @breadCrumb = {
         /<a href="#"><b>@Messages("groups")</b></a>
     }
@@ -27,15 +27,20 @@ limitations under the License.
                         <form id="searchForm" name="searchForm"
                         method="Post" action="/group/findGroup"
                         class="form">
-                            <div class="col-md-10">
-                                <div class="col-md-3 col-md-offset-2">
-                                    <div class="form-groupe">
+                            <div class="col-md-10 text-center">
+                                <div class="col-md-3">
+                                    <div class="form-group">
                                     @helper.inputText(searchForm("name"), '_label -> Messages("name"), '_id -> "name", 'class -> "form-control")
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-groupe">
-                                    @helper.inputText(searchForm("refName"), '_label -> Messages("refName"), '_id -> "name", 'class -> "form-control")
+                                    <div class="form-group">
+                                    @helper.inputText(searchForm("refName"), '_label -> Messages("refName"), '_id -> "refName", 'class -> "form-control")
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                    @helper.inputText(searchForm("applicationId"), '_label -> Messages("application"), '_id -> "applicationId", 'class -> "form-control")
                                     </div>
                                 </div>
                                 <div class="col-md-1 text-center">
@@ -63,12 +68,14 @@ limitations under the License.
                                 <th>@Messages("name")</th>
                                 <th>@Messages("refName")</th>
                                 <th>@Messages("creationDate")</th>
+                                <th>@Messages("application")</th>
                             </tr>
                             @groupsList.get.map { group =>
                                 <tr>
                                     <td><a href="/group/showGroup?id=@group.id.get" style="text-decoration : no-underline">@group.name</a></td>
                                     <td>@group.refName</td>
                                     <td>@group.creationDate</td>
+                                    <td>@group.applicationId</td>
                                 </tr>
                             }
                         </table>

@@ -55,6 +55,14 @@ limitations under the License.
                     </div>
                 </div>
                 <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <b>@Messages("application")</b><br/>
+                            <a href="/application/findById?id=@group.applicationId">@group.applicationId</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
                     <div class="col-md-12 text-center">
                         <a href="/group/groupForm?id=@group.id.get" class="btn btn-default btn-primary">@Messages("update")</a>
                         <a href="/group/deleteGroup?id=@group.id.get" class="btn btn-default">@Messages("delete")</a>

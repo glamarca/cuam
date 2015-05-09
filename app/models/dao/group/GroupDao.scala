@@ -16,6 +16,7 @@ limitations under the License.
 package models.dao.group
 
 import controllers.group.SearchGroupForm
+import models.dao.application.applicationDao
 import models.entity.group.GroupComponent
 import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.{Config, Profile}
@@ -38,7 +39,8 @@ object groupDao {
    * @return A generic query
    */
   def find(  name : Column[Option[String]],
-            refName : Column[Option[String]]) =
+            refName : Column[Option[String]],
+            applicationId : Column[Option[Int]]) =
   dao.groups.filter { g =>
     Case.If(name.isDefined).Then(g.name === name).Else((Some(true))) &&
     Case.If(refName.isDefined).Then(g.refName === refName).Else(Some(true))
@@ -72,5 +74,23 @@ object groupDao {
    * @return The query to find the refName
    */
   def findByRefName(refName : String) = dao.groups.filter (_.refName === refName)
+
+  /**
+   * Find a list of groups that are linked to an application by using the application Id
+   * @param applicationId The Id of the application which the groups belong to
+   * @return The query to find the groups
+   */
+  def findByApplicationId(applicationId : Int) = dao.groups filter (_.applicationId === applicationId)
+
+  /**
+   * Find a list of groups that belong to an application by using the application refName
+   * @param applicationRefName The refName of the application which the groups belong to
+   * @return The query to find the groups
+   */
+  def findByApplicationRefName(applicationRefName : String) = for{
+    group <- dao.groups
+    app <- applicationDao.dao.applications if app.id === group.applicationId
+  } yield group
+
 
 }

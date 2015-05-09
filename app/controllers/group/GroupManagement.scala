@@ -34,7 +34,8 @@ object GroupManagement extends Controller {
   val searchGroupForm = Form(
     mapping(
       "name" -> default(optional(text), None),
-      "refNale" -> default(optional(text), None)
+      "refNale" -> default(optional(text), None),
+      "applicationID" -> default(optional(number),None)
     )(SearchGroupForm.apply)(SearchGroupForm.unapply)
   )
 
@@ -49,7 +50,8 @@ object GroupManagement extends Controller {
       "creationDate" -> default(sqlDate, null),
       "updateDate" -> default(sqlDate, new java.sql.Date(new java.util.Date().getTime)),
       "updatingUser" -> default(text, "user"),
-      "descritpion" -> default(optional(text), None)
+      "descritpion" -> default(optional(text), None),
+       "applicationId" -> number
     )(Group.apply)(Group.unapply)
   )
 

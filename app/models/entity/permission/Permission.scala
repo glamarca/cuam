@@ -36,11 +36,12 @@ trait PermissionComponent { this : Profile =>
     def description : Column[String] = column[String]("DESCRIPTION",O.Nullable)
     def modificationDate : Column[Date] = column[Date]("MODIFICATION_DATE",O.NotNull)
     def updatingUser : Column[String] = column[String]("UPDATING_USER",O.NotNull)
+    def applicationId : Column[Int] = column[Int]("APPLICATION_ID",O.NotNull)
 
-    override def * = (id.?,name,refName,creationDate,description.?,modificationDate,updatingUser) <>(Permission.tupled, Permission.unapply)
+    override def * = (id.?,name,refName,creationDate,description.?,modificationDate,updatingUser,applicationId) <>(Permission.tupled, Permission.unapply)
 
   }
 
 }
 
-case class Permission(id : Option[Int],name : String,refName : String,creationDate : Date,description : Option[String],modificationDate : Date,updatingUser : String)
+case class Permission(id : Option[Int],name : String,refName : String,creationDate : Date,description : Option[String],modificationDate : Date,updatingUser : String,applicationId : Int)

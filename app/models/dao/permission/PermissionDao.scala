@@ -17,6 +17,7 @@ package models.dao.permission
 
 import java.util.Locale
 
+import models.dao.application.applicationDao
 import models.entity.permission.PermissionComponent
 import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.{Config, Profile}
@@ -46,5 +47,21 @@ object permissionDao {
 
   def findByNameOrRefName(name : String , refName : String) = dao.permissions filter (p => p.name.toUpperCase === name.toUpperCase || p.refName === refName.toUpperCase)
 
+  /**
+   * Find permissions that belong to an application by using the application refName
+   * @param appRefName The refName of the application wich the permissions belong to
+   * @return The query to find the list of permissions
+   */
+  def findByApplicationRefName(appRefName : String) = for {
+    permission <- dao.permissions
+    application <- applicationDao.dao.applications if application.id === permission.applicationId
+  } yield permission
+
+  /**
+   * Find a list of permissions that belong to an application by using the application Id
+   * @param appId The id of the application which the permissions belong to
+   * @return The query to find the permissions
+   */
+  def findByApplicationId(appId : Int) = dao.permissions filter (_.applicationId === appId)
 
 }

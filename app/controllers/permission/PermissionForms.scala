@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2015. Gaëtan La Marca
+ *
+ * Copyright 2015 Gaëtan La Marca
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,8 +13,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * /
  */
 
-package controllers.group
+package controllers.permission
 
-case class SearchGroupForm(name : Option[String],refName : Option[String],applicationId : Option[Int])
+case class SearchPermissionForm(refName : Option[String], name : Option[String], applicationId : Option[Int])
+

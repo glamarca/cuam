@@ -53,10 +53,11 @@ object PermissionManagement extends Controller {
    * Le formualire de recherche d'une permission
    */
   val searchForm = Form(
-    tuple(
+    mapping(
       "name" -> default(optional(text), None),
-      "refName" -> default(optional(text), None)
-    )
+      "refName" -> default(optional(text), None),
+    "applicationId" -> default(optional(number),None)
+    )(Applica)
   )
 
   /**

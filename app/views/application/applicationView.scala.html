@@ -1,0 +1,77 @@
+@(application : models.entity.application.Application, groupsList : Option[List[models.entity.group.Group]])
+@breadCrumb = {
+
+}
+@main()(breadCrumb){
+    <div class="container">
+        <h3><span class="label label-primary">@application.name</span></h3>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <b>@Messages("name")</b><br/>
+                            @application.name
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <b>@Messages("refName")</b><br/>
+                            @application.refName
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <b>@Messages("description")</b><br/>
+                            @application.description
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <b>@Messages("creationDate")</b><br/>
+                            @application.creationDate
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <a href="/application/applicationFormForm?id=@application.id.get" class="btn btn-default btn-primary">@Messages("update")</a>
+                        <a href="/application/deleteApplication?id=@application.id.get" class="btn btn-default">@Messages("delete")</a>
+                    </div>
+                </div>
+                <br/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div class="panel panel-default">
+                    <div class="panel-heading">@Messages("groupsListFromApplication")</div>
+                    <div class="panel-body">
+                        @if(groupsList.isDefined && !groupsList.isEmpty){
+                            <div class="table-responsive">
+                                <table class="table table-striped table-condensed">
+                                    <tr>
+                                        <th>@Messages("name")</th>
+                                        <th>@Messages("refName")</th>
+                                        <th>@Messages("descrition")</th>
+                                        <th>@Messages("dateCreation")</th>
+                                    </tr>
+                                    @groupsList.get.map {g =>
+                                        <tr>
+                                            <td><a href="/group/showGroup?id=@g.id.get" style="text-decoration : no-underline">@g.name</a></td>
+                                            <td>@g.refName</td>
+                                            <td>@g.description</td>
+                                            <td>@g.creationDate</td>
+                                        </tr>
+                                    }
+                                </table>
+                            </div>
+                        }
+                    </div>
+                 </div>
+             </div>
+         </div>
+    </div>
+}

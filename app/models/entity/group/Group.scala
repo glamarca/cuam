@@ -31,11 +31,12 @@ trait GroupComponent { this : Profile =>
     def updateDate : Column[Date] = column[Date]("MODIFICATION_DATE",O.NotNull)
     def updatingUser : Column[String] = column[String]("UPDATING_USER",O.NotNull)
     def descritpion : Column[String] = column[String]("DESCRIPTION",O.Nullable)
+    def applicationId : Column[Int] = column[Int]("APPLICATION_ID",O.NotNull)
 
-    override def * = (id.?,name,refName,creationDate,updateDate,updatingUser,descritpion.?) <>(Group.tupled, Group.unapply)
+    override def * = (id.?,name,refName,creationDate,updateDate,updatingUser,descritpion.?,applicationId) <>(Group.tupled, Group.unapply)
 
   }
 
 }
 
-case class Group(id : Option[Int],name : String,refName : String,creationDate : Date,updateDate : Date,updatingUser : String,description : Option[String])
+case class Group(id : Option[Int],name : String,refName : String,creationDate : Date,updateDate : Date,updatingUser : String,description : Option[String],applicationId : Int)
