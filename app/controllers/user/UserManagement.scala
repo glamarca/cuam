@@ -19,7 +19,6 @@ limitations under the License.
  */
 package controllers.user
 
-import models.dao.permission.permissionDao
 import models.dao.user.userDao
 import models.entity.user.User
 import play.api.Play.current
@@ -31,6 +30,8 @@ import play.api.i18n.Messages
 import play.api.mvc.{Action, Controller}
 import views.html.user._
 import org.mindrot.jbcrypt.BCrypt
+import play.api.libs.json.Json
+
 
 object UserManagement extends Controller {
 
@@ -102,7 +103,7 @@ object UserManagement extends Controller {
         BadRequest(UserFormView(formWithErrors)(Messages("userUpdate")))
       },
       form => {
-        val userExist = userDao.nameOrEmaiMatch(form.userName.get, form.email.get).list
+        val userExist = userDao.userNameOrEmaiMatch(form.userName.get, form.email.get).list
         if (!userExist.isEmpty && userExist(0).id != form.userId) {
           BadRequest(UserFormView(userForm.fill(form).withGlobalError(Messages("userExists")))(Messages("userUpdate")))
         }
@@ -128,7 +129,7 @@ object UserManagement extends Controller {
         BadRequest(UserFormView(formWithErrors)(Messages("userCreation")))
       },
       form => {
-        val userExist = userDao.nameOrEmaiMatch(form.userName.get, form.email.get).list
+        val userExist = userDao.userNameOrEmaiMatch(form.userName.get, form.email.get).list
         if (!userExist.isEmpty) {
           BadRequest(UserFormView(userForm.fill(form).withGlobalError(Messages("userExists")))(Messages("userCreation")))
         }
@@ -165,6 +166,38 @@ object UserManagement extends Controller {
   def deleteUser(id: Int) = DBAction { implicit request =>
     userDao.dao.users.filter(_.id === id).mutate(_.delete)
     Ok(userManagementView(userForm, None))
+  }
+
+
+  /**
+   * Find the list of users when user.name like $lastNameCandidate
+   * @param lastNameCandidate
+   * @return
+   */
+  def userLastNameCompletion(lastNameCandidate : String) = DBAction { implicit request =>
+      val lastNamesList = userDao.findLastNameLike(lastNameCandidate).list
+      Ok(Json.toJson(lastNamesList))
+  }
+
+  def userFirstNameCompletion(firstNameCandidate : String) = DBAction { implicit request =>
+      val firstNamesList = userDao.findFirstNameLike(firstNameCandidate).list
+      Ok(Json.toJson(firstNamesList))
+  }
+
+  def findUserNameByLastAndFirstNames(lastName : String , firstName : String)  = DBAction { implicit request =>
+    val userNameList = userDao.findUserNameByLastAndFirstNames(lastName,firstName).list
+    Ok(Json.toJson(userNameList))
+  }
+
+  def findUserLastNameAndFirstNameByUserName(userName : String) = DBAction { implicit request =>
+    val userLastAndFirstNameTuple = userDao.findByUserName(userName).map(u => (u.lastName,u.firstName)).first
+
+    Ok(Json.toJson(Json.arr(List(userLastAndFirstNameTuple._1,userLastAndFirstNameTuple._2))))
+  }
+
+  def testAutoCompletion(str : String) = Action { implicit request =>
+    val listeString = "CUAM"::"APP2"::Nil
+    Ok(Json.toJson(listeString))
   }
 
 }

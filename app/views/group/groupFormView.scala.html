@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 *@
-@(groupForm : Form[models.entity.group.Group])(action : String)
+@(groupForm : Form[models.entity.group.Group],applicationsList : List[models.entity.application.Application])(action : String)
     @breadCrumb = {
         /<a href="/group">@Messages("groups")</a>
         /<a href="#"><b>@action</b></a>
@@ -34,14 +34,24 @@ limitations under the License.
             <div class="panel-body">
                 <form permissionView="form" id="groupForm" action="@if(!groupForm("id").value.isDefined){/group/createGroup}else{/group/updateGroup}" method="POST">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
                             @helper.inputText(groupForm("name"), '_label -> Messages("name"), '_id -> "name", 'class -> "form-control", 'maxlenght -> 25, 'required -> true,'_showConstraints -> false)
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
                             @helper.inputText(groupForm("refName"), '_label -> Messages("refName"), '_id -> "refName", 'class -> "form-control", 'maxlenght -> 45, 'required -> true,'_showConstraints -> false)
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="applicationId" class="form-control">@Messages("application")</label>
+                                <select id="applicationId" name="applicationId" class="form-control" required="true">
+                                    @applicationsList.map { a =>
+                                        <option value="@a.id.get">@a.name</option>
+                                    }
+                                </select>
                             </div>
                         </div>
                     </div>

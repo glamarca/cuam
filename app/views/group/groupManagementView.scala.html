@@ -27,7 +27,7 @@ limitations under the License.
                         <form id="searchForm" name="searchForm"
                         method="Post" action="/group/findGroup"
                         class="form">
-                            <div class="col-md-10 text-center">
+                            <div class="col-md-10">
                                 <div class="col-md-3">
                                     <div class="form-group">
                                     @helper.inputText(searchForm("name"), '_label -> Messages("name"), '_id -> "name", 'class -> "form-control")
@@ -39,9 +39,13 @@ limitations under the License.
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                    @helper.inputText(searchForm("applicationId"), '_label -> Messages("application"), '_id -> "applicationId", 'class -> "form-control")
-                                    </div>
+                                    <label for="applicationId">@Messages("application")</label>
+                                    <select id="applicationId" name="applicationId" class="form-control">
+                                        <option class="blank" value="@None" selected></option>
+                                        @applicationsList.map { a =>
+                                        <option value="@a.id">@a.name</option>
+                                        }
+                                    </select>
                                 </div>
                                 <div class="col-md-1 text-center">
                                     <button type="submit" class="btn btn-default btn-primary" id="searchButton" aria-label="@Messages("search")" style="margin-top : 25px">

@@ -17,6 +17,7 @@ package models.dao.permission
 
 import java.util.Locale
 
+import controllers.permission.SearchPermissionForm
 import models.dao.application.applicationDao
 import models.entity.permission.PermissionComponent
 import play.api.db.slick.Config.driver.simple._
@@ -33,13 +34,14 @@ object permissionDao {
 
   val dao = new PermissionDao(Config.driver)
 
-  def search(name : Column[Option[String]],refName : Column[Option[String]]) =
+  def search(name : Column[Option[String]],refName : Column[Option[String]],applicationId : Column[Option[Int]]) =
     dao.permissions filter { p =>
       Case.If(name.isDefined).Then(p.name.toUpperCase === name.toUpperCase).Else(Some(true)) &&
-      Case.If(refName.isDefined).Then(p.refName === refName.toUpperCase).Else(Some(true))
+      Case.If(refName.isDefined).Then(p.refName === refName.toUpperCase).Else(Some(true)) &&
+      Case.If(applicationId.isDefined).Then(p.applicationId === applicationId).Else(Some(true))
   }
 
-  def findByNames(name : Option[String],refName : Option[String]) = search(name,refName)
+  def findBySearchForm(searchForm : SearchPermissionForm) = search(searchForm.name,searchForm.refName,searchForm.applicationId)
 
   def findById(id : Int) = dao.permissions filter (p => p.id === id)
 

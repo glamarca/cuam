@@ -51,8 +51,15 @@ object userDao {
 
   def findById(id: Int) = dao.users filter (u => u.id === id)
 
-  def nameOrEmaiMatch(userName : String,email : String) = dao.users filter (u => u.userName === userName || u.email === email)
+  def userNameOrEmaiMatch(userName : String,email : String) = dao.users filter (u => u.userName === userName || u.email === email)
 
   def findByUserName(userName : String) = dao.users filter (u => u.userName === userName)
+
+  def findLastNameLike(lastNameCandidate : String) = dao.users filter (u => u.lastName like s"$lastNameCandidate%") map (u => u.lastName)
+
+  def findFirstNameLike(firstNameCandidate : String) = dao.users filter (u => u.lastName like s"$firstNameCandidate%") map (u => u.firstName)
+
+  def findUserNameByLastAndFirstNames(firstName : String,lastName : String) = dao.users filter (u => u.lastName === lastName && u.firstName === firstName) map (u => u.userName)
+
 
 }

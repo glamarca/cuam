@@ -21,6 +21,7 @@ package controllers.permission
 
 import java.util.Locale
 
+import models.dao.application.applicationDao
 import models.dao.permission.permissionDao
 import models.entity.permission.Permission
 import play.api.Play.current
@@ -34,6 +35,10 @@ import views.html.permission._
 
 object PermissionManagement extends Controller {
 
+  val allApplicationsList = DB.withSession {implicit request =>
+      applicationDao.dao.applications.list
+  }
+
   /**
    * Le formulaire de creation et modification d'une permission
    */
@@ -45,7 +50,8 @@ object PermissionManagement extends Controller {
       "creationDate" -> default(sqlDate, null),
       "description" -> default(optional(text), None),
       "modificationDate" -> default(sqlDate, null),
-      "updatingUser" -> default(text, "user")
+      "updatingUser" -> default(text, "user"),
+      "applicationId" -> number
     )(Permission.apply)(Permission.unapply)
   )
 
@@ -56,15 +62,15 @@ object PermissionManagement extends Controller {
     mapping(
       "name" -> default(optional(text), None),
       "refName" -> default(optional(text), None),
-    "applicationId" -> default(optional(number),None)
-    )(Applica)
+      "applicationId" -> default(optional(number), None)
+    )(SearchPermissionForm.apply)(SearchPermissionForm.unapply)
   )
 
   /**
    * The index page of the permission management
    */
   def permissionIndex = Action { implicit request =>
-    Ok(permissionManagementView(None))
+    Ok(permissionManagementView(None,allApplicationsList))
   }
 
   /**
@@ -74,11 +80,11 @@ object PermissionManagement extends Controller {
   def findPermission = DBAction { implicit request =>
     searchForm.bindFromRequest.fold(
       formWithError => {
-        BadRequest(permissionManagementView(None))
+        BadRequest(permissionManagementView(None,allApplicationsList))
       },
       searchForm => {
-        val permissionsList = permissionDao.findByNames(searchForm._1, searchForm._2).list
-        Ok(permissionManagementView(Some(permissionsList)))
+        val permissionsList = permissionDao.findBySearchForm(searchForm).list
+        Ok(permissionManagementView(Some(permissionsList),allApplicationsList))
       }
     )
   }
@@ -100,12 +106,12 @@ object PermissionManagement extends Controller {
   def updatePermission = DBAction { implicit request =>
     permissionForm.bindFromRequest.fold(
       formWithError => {
-        BadRequest(permissionFormView(formWithError)(Messages("permissionUpdate")))
+        BadRequest(permissionFormView(formWithError,allApplicationsList)(Messages("permissionUpdate")))
       },
       form => {
         val permissionExists = permissionDao.findByNameOrRefName(form.name, form.refName).list
         if (!permissionExists.isEmpty && permissionExists(0).id != form.id) {
-          BadRequest(permissionFormView(permissionForm.fill(form).withGlobalError(Messages("permissionExist")))(Messages("permissionUpdate")))
+          BadRequest(permissionFormView(permissionForm.fill(form).withGlobalError(Messages("permissionExist")),allApplicationsList)(Messages("permissionUpdate")))
         }
         else {
           permissionDao.findById(form.id.get).map(p => (p.name, p.refName, p.description, p.modificationDate, p.updatingUser))
@@ -124,14 +130,14 @@ object PermissionManagement extends Controller {
   def createPermission = DBAction { implicit request =>
     permissionForm.bindFromRequest.fold(
       formWithError => {
-        BadRequest(permissionFormView(formWithError)(Messages("permissionCreation")))
+        BadRequest(permissionFormView(formWithError,allApplicationsList)(Messages("permissionCreation")))
       },
       form => {
         if (!permissionDao.findByNameOrRefName(form.name, form.refName).list.isEmpty) {
-          BadRequest(permissionFormView(permissionForm.fill(form).withGlobalError(Messages("permissionExist")))(Messages("permissionCreation")))
+          BadRequest(permissionFormView(permissionForm.fill(form).withGlobalError(Messages("permissionExist")),allApplicationsList)(Messages("permissionCreation")))
         }
         else {
-          val permissionWithDate = Permission(None, form.name, form.refName.toUpperCase(Locale.ENGLISH), new java.sql.Date(new java.util.Date().getTime()), form.description, new java.sql.Date(new java.util.Date().getTime()), "user")
+          val permissionWithDate = Permission(None, form.name, form.refName.toUpperCase(Locale.ENGLISH), new java.sql.Date(new java.util.Date().getTime()), form.description, new java.sql.Date(new java.util.Date().getTime()), "user",form.applicationId)
           permissionDao.dao.permissions += permissionWithDate
           Redirect(routes.PermissionManagement.showPermission(permissionDao.findByNameOrRefName(form.name, form.refName).first.id.get))
         }
@@ -161,10 +167,10 @@ object PermissionManagement extends Controller {
   def showPermissionForm(id: Option[Int]) = DBAction { implicit request =>
     if (id.isDefined) {
       val permission = permissionDao.findById(id.get).first
-      Ok(permissionFormView(permissionForm.fill(permission))(Messages("permissionUpdate")))
+      Ok(permissionFormView(permissionForm.fill(permission),allApplicationsList)(Messages("permissionUpdate")))
     }
     else {
-      Ok(permissionFormView(permissionForm)(Messages("permissionCreation")))
+      Ok(permissionFormView(permissionForm,allApplicationsList)(Messages("permissionCreation")))
     }
   }
 

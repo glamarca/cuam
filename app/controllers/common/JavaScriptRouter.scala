@@ -16,14 +16,18 @@ limitations under the License.
 
 package controllers.common
 
-import play.api.Routes
+import controllers.user.UserManagement
+import play.api._
 import play.api.mvc._
 
 object JavaScriptRouter extends Controller {
   def javascriptRoutes = Action { implicit request =>
     Ok(
       Routes.javascriptRouter("jsRoutes")(
-
+        controllers.user.routes.javascript.UserManagement.userLastNameCompletion,
+        controllers.user.routes.javascript.UserManagement.userFirstNameCompletion,
+        controllers.user.routes.javascript.UserManagement.findUserNameByLastAndFirstNames,
+        controllers.user.routes.javascript.UserManagement.testAutoCompletion
       )
     ).as("text/javascript")
   }

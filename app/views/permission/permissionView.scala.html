@@ -52,6 +52,14 @@ limitations under the License.
                     </div>
                 </div>
                 <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <b>@Messages("application")</b><br/>
+                            @permission.applicationId
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
                     <div class="col-md-12 text-center">
                         <a href="/permission/permissionForm?id=@permission.id.get" class="btn btn-default btn-primary">@Messages("update")</a>
                         <a href="/permission/deletePermission?id=@permission.id.get" class="btn btn-default">@Messages("delete")</a>

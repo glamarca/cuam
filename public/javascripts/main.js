@@ -44,3 +44,9 @@ function validateUserForm(messageErreurEmail, messageErreurPassword) {
     }
     return verificationEmail && verificationPassword;
 }
+
+$( "input#appId" ).autocomplete({
+    source: function( req, response ) {
+        $.getJSON( "@rcontrollers.user.routes.javascript.UserManagement.testAutoCompletion(\"\")" + extractLast( req.term ), { term: extractLast( req.term ) }, response );
+    }
+});

@@ -15,6 +15,7 @@
  */
 package controllers.group
 
+import models.dao.application.applicationDao
 import models.dao.group.{groupDao, permissionGroupDao, userGroupDao}
 import models.dao.permission.permissionDao
 import models.entity.group.Group
@@ -25,8 +26,13 @@ import play.api.db.slick._
 import play.api.i18n.Messages
 import play.api.mvc.{Action, Controller}
 import views.html.group._
+import play.api.Play.current
 
 object GroupManagement extends Controller {
+
+  val allApplicationsList = DB.withSession { implicit request =>
+    applicationDao.dao.applications.list
+  }
 
   /**
    * Form that handle "finding group"
@@ -59,7 +65,7 @@ object GroupManagement extends Controller {
    * Show the index page of groups management
    */
   def groupIndex = Action { implicit request =>
-    Ok(groupManagementView(searchGroupForm,None))
+    Ok(groupManagementView(searchGroupForm,None,allApplicationsList))
   }
 
   /**
@@ -89,10 +95,10 @@ object GroupManagement extends Controller {
     if (id.isDefined) {
       val group = groupDao.findById(id.get).first
       val filledGroupForm = groupForm.fill(group)
-      Ok(groupFormView(filledGroupForm)(Messages("groupUpdate")))
+      Ok(groupFormView(filledGroupForm,allApplicationsList)(Messages("groupUpdate")))
     }
     else {
-      Ok(groupFormView(groupForm)(Messages("groupCreation")))
+      Ok(groupFormView(groupForm,allApplicationsList)(Messages("groupCreation")))
     }
   }
 
@@ -103,11 +109,11 @@ object GroupManagement extends Controller {
   def findGroup = DBAction { implicit request =>
     searchGroupForm.bindFromRequest.fold(
       formWithErrors => {
-        BadRequest
+        BadRequest(groupManagementView(formWithErrors,None,allApplicationsList))
       },
       validForm => {
         val groupsList = groupDao.findBySearchForm(validForm).list
-        Ok(groupManagementView(searchGroupForm.fill(validForm),Some(groupsList)))
+        Ok(groupManagementView(searchGroupForm.fill(validForm),Some(groupsList),allApplicationsList))
       }
     )
   }
@@ -123,15 +129,15 @@ object GroupManagement extends Controller {
   def createGroup = DBAction { implicit request =>
     groupForm.bindFromRequest.fold(
       formWithErrors => {
-        BadRequest(groupFormView(formWithErrors)(Messages("groupCreation")))
+        BadRequest(groupFormView(formWithErrors,allApplicationsList)(Messages("groupCreation")))
       },
       validForm => {
         val groupExists = !groupDao.findByNameOrRefName(validForm.name, validForm.refName).list.isEmpty
         if (groupExists) {
-          BadRequest(groupFormView(groupForm.fill(validForm).withGlobalError(Messages("groupExists")))(Messages("groupCreation")))
+          BadRequest(groupFormView(groupForm.fill(validForm).withGlobalError(Messages("groupExists")),allApplicationsList)(Messages("groupCreation")))
         }
         else {
-          val group = Group(validForm.id, validForm.name, validForm.refName, new java.sql.Date(new java.util.Date().getTime), validForm.updateDate, validForm.updatingUser, validForm.description)
+          val group = Group(validForm.id, validForm.name, validForm.refName, new java.sql.Date(new java.util.Date().getTime), validForm.updateDate, validForm.updatingUser, validForm.description,validForm.applicationId)
           groupDao.dao.groups += group
           Redirect(routes.GroupManagement.showGroup(groupDao.findByRefName(validForm.refName).first.id.get))
         }
@@ -147,17 +153,17 @@ object GroupManagement extends Controller {
   def updateGroup = DBAction {implicit request =>
     groupForm.bindFromRequest.fold(
       formWithErrors => {
-        BadRequest(groupFormView(formWithErrors)(Messages("groupUpdate")))
+        BadRequest(groupFormView(formWithErrors,allApplicationsList)(Messages("groupUpdate")))
       },
       validForm => {
         val groupExists = groupDao.findByNameOrRefName(validForm.name, validForm.refName).list
         if (!groupExists.isEmpty && groupExists(0).id != validForm.id) {
-          BadRequest(groupFormView(groupForm.fill(validForm).withGlobalError(Messages("groupExists")))(Messages("groupUpdate")))
+          BadRequest(groupFormView(groupForm.fill(validForm).withGlobalError(Messages("groupExists")),allApplicationsList)(Messages("groupUpdate")))
         }
         else {
           groupDao.findById(validForm.id.get)
-            .map(g => (g.name,g.refName,g.descritpion,g.updatingUser,g.updateDate))
-          .update((validForm.name,validForm.refName,validForm.description.orNull,validForm.updatingUser,validForm.updateDate))
+            .map(g => (g.name,g.refName,g.descritpion,g.updatingUser,g.updateDate,g.applicationId))
+          .update((validForm.name,validForm.refName,validForm.description.orNull,validForm.updatingUser,validForm.updateDate,validForm.applicationId))
           Redirect(routes.GroupManagement.showGroup(validForm.id.get))
         }
       }

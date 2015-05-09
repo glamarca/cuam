@@ -51,7 +51,7 @@ object groupDao {
    * @param searchForm The search form
    * @return The query to find the groups paramerized with the search form infos.
    */
-  def findBySearchForm(searchForm : SearchGroupForm) = find(searchForm.name,searchForm.refName)
+  def findBySearchForm(searchForm : SearchGroupForm) = find(searchForm.name,searchForm.refName,searchForm.applicationId)
 
   /**
    * Find a group by his id
