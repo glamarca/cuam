@@ -33,6 +33,7 @@ limitations under the License.
             <div class="panel-heading">@action</div>
             <div class="panel-body">
                 <form permissionView="form" id="permissionForm" action="@if(!permissionForm("id").value.isDefined){/permission/createPermission}else{/permission/updatePermission}" method="POST">
+                    <input type="hidden" name="@permissionForm("id").name" id="id" value="@permissionForm("id").value"/>
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
@@ -46,7 +47,7 @@ limitations under the License.
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="applicationId" class="form-control">@Messages("application")</label>
+                                <label for="applicationId">@Messages("application")</label>
                                 <select id="applicationId" name="applicationId" class="form-control">
                                     @applicationsList.map { a =>
                                         <option value="@a.id.get">@a.name</option>

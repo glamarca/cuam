@@ -72,7 +72,7 @@ limitations under the License.
                             <h4 class="list-group-item-heading">@Messages("groupsIncludingPermissionList")</h4>
                             @if(groupsList.isDefined && !groupsList.isEmpty) {
                                 @groupsList.get.map { g =>
-                                    <p class="list-group-item-text"><a href="group/showGroup?id=@g.id">@g.name</a></p>
+                                    <p class="list-group-item-text"><a href="/group/showGroup?id=@g.id">@g.name</a></p>
                                 }
                             }
                         </div>

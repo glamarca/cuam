@@ -51,4 +51,12 @@ object userGroupDao {
     group <- groupDao.dao.groups if group.id === userGroup.groupId
   } yield group
 
+  /**
+   * Find the row that link a user to a group
+   * @param userId The id of the user linked to the group
+   * @param groupId The id of the group containing the user
+   * @return The query to find the row that link the user to the group
+   */
+  def findByUserAndGroupIds(userId : Int,groupId : Int) = dao.usersgroups filter (ug => ug.userId === userId && ug.groupId === groupId)
+
 }

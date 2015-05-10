@@ -34,8 +34,8 @@ object ApplicationManagement extends Controller{
   val applicationForm = Form(
       mapping(
         "id" -> default(optional(number),None),
+        "name" -> nonEmptyText,
       "refName" -> nonEmptyText,
-      "name" -> nonEmptyText,
       "description" -> default(optional(text),None),
       "creationDate" -> default(sqlDate,null),
       "updateDate" -> default(sqlDate,new java.sql.Date(new java.util.Date().getTime)),
@@ -104,7 +104,8 @@ object ApplicationManagement extends Controller{
             BadRequest(applicationFormView(applicationForm.fill(app).withGlobalError(Messages("applicationExists")))(Messages("applicationCreation")))
           }
           else{
-            applicationDao.dao.applications += app
+            val application = Application(app.id,app.name,app.refName,app.description,new java.sql.Date(new java.util.Date().getTime),app.updateDate,app.updatingUser)
+            applicationDao.dao.applications += application
             Redirect(routes.ApplicationManagement.showApplication(applicationDao.findByRefName(app.refName).first.id.get))
           }
         }
@@ -124,8 +125,8 @@ object ApplicationManagement extends Controller{
         BadRequest(applicationFormView(formWithErrors)(Messages("applicationUpdate")))
       },
       app => {
-        val listeApplication = applicationDao.findByNameOrRefName(app.name,app.refName).list
-        if(!listeApplication.isEmpty && listeApplication(0).id.get != app.id.get){
+        val appsList = applicationDao.findByNameOrRefName(app.name,app.refName).list
+        if(!appsList.isEmpty && appsList(0).id.get != app.id.get){
           BadRequest(applicationFormView(applicationForm.fill(app).withGlobalError(Messages("applicationExists")))(Messages("applicationCreation")))
         }
         else{

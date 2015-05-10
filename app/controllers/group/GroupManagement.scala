@@ -18,7 +18,8 @@ package controllers.group
 import models.dao.application.applicationDao
 import models.dao.group.{groupDao, permissionGroupDao, userGroupDao}
 import models.dao.permission.permissionDao
-import models.entity.group.Group
+import models.dao.user.userDao
+import models.entity.group.{UserGroup, PermissionGroup, Group}
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.db.slick.Config.driver.simple._
@@ -56,7 +57,7 @@ object GroupManagement extends Controller {
       "creationDate" -> default(sqlDate, null),
       "updateDate" -> default(sqlDate, new java.sql.Date(new java.util.Date().getTime)),
       "updatingUser" -> default(text, "user"),
-      "descritpion" -> default(optional(text), None),
+      "description" -> default(optional(text), None),
        "applicationId" -> number
     )(Group.apply)(Group.unapply)
   )
@@ -178,5 +179,58 @@ object GroupManagement extends Controller {
   def deleteGroup(id : Int) = DBAction { implicit request =>
     groupDao.findById(id).mutate(_.delete)
     Redirect(routes.GroupManagement.groupIndex())
+  }
+
+  /**
+   * Add a permission to a group
+   * @param groupId The id of the group
+   * @param permissionId The id of the permission we want to add
+   * @return The group view with updated data
+   */
+  def addPermissionToGroup(groupId : Int,permissionId : Int) = DBAction { implicit request =>
+    permissionGroupDao.dao.permissionsGroups += PermissionGroup(None,permissionId,groupId,new java.sql.Date(new java.util.Date().getTime))
+    Redirect(routes.GroupManagement.showGroup(groupId))
+  }
+
+  /**
+   * Add a user to a group by using his userName or last and firstName
+   * @param groupId The id of the group
+   * @param userLastName The lastName of the user
+   * @param userFirstName The firstName of the user
+   * @param userUserName The userName of the user
+   * @return The group view with data updated.
+   */
+  def addUserToGroup(groupId : Int,userLastName : Option[String],userFirstName : Option[String],userUserName : Option[String]) = DBAction {implicit request =>
+    val user = {
+      if(userUserName.isDefined && !userUserName.isEmpty) Some(userDao.findByUserName(userUserName.get).first)
+      else if(userLastName.isDefined && !userLastName.isEmpty && userFirstName.isDefined && !userFirstName.isEmpty) Some(userDao.findByUserLastAndFirstName(userLastName.get,userFirstName.get).first)
+      else None
+    }
+    if(user.isDefined){
+      userGroupDao.dao.usersgroups += UserGroup(None,user.get.id.get,groupId,new java.sql.Date(new java.util.Date().getTime))
+    }
+    Redirect(routes.GroupManagement.showGroup(groupId))
+  }
+
+  /**
+   * Remove a permission from a group
+   * @param groupId The id of the group
+   * @param permissionId The id of the permission we want to remove
+   * @return The group view with updated data
+   */
+  def removePermissionFromGroup(groupId : Int,permissionId : Int) = DBAction {implicit request =>
+    permissionGroupDao.findByPermissionAndGroupIds(permissionId,groupId).mutate(_.delete)
+    Redirect(routes.GroupManagement.showGroup(groupId))
+  }
+
+  /**
+   * Remove a user from a group
+   * @param groupId The id of the group
+   * @param userId The id of the user we want to remove from the group
+   * @return The group view with updated data.
+   */
+  def removeUserFromGroup(groupId : Int,userId : Int) = DBAction {implicit request =>
+    userGroupDao.findByUserAndGroupIds(userId,groupId).mutate(_.delete)
+    Redirect(routes.GroupManagement.showGroup(groupId))
   }
 }

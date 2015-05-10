@@ -50,3 +50,18 @@ $( "input#appId" ).autocomplete({
         $.getJSON( "@rcontrollers.user.routes.javascript.UserManagement.testAutoCompletion(\"\")" + extractLast( req.term ), { term: extractLast( req.term ) }, response );
     }
 });
+
+/**
+ * Set the href value of the link "add permission to group"
+ * @param link The link we want to set the href value
+ * @param groupId The id of the group we want to add permission
+ * @returns {boolean} True if the permissionId is defined , false else.
+ */
+function setHrefForAddPermissionToGroup(link,groupId){
+    permissionId = document.querySelector("select#permissionToAdd").value;
+    if(permissionId !== null && permissionId !== "") {
+        link.href = "/group/addPermissionToGroup?groupId="+groupId+"&permissionId="+permissionId;
+        return true;
+    }
+    return false;
+}

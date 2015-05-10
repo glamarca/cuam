@@ -32,7 +32,8 @@ limitations under the License.
             <div class="panel panel-default">
                 <div class="panel-heading">@action</div>
                 <div class="panel-body">
-                    <form id="UserForm" action="@if(userForm("id").value.isDefined){/user/createUser}else{/user/updateUser}" method="POST">
+                    <form id="UserForm" action="@if(!userForm("id").value.isDefined){/user/createUser}else{/user/updateUser}" method="POST">
+                        <input type="hidden" name="@userForm("id").name" id="id" value="@userForm("id").value"/>
                         <div class="row">
                             <div class=col-md-6>
                                 <div class="form-group">
@@ -70,7 +71,7 @@ limitations under the License.
                                 </div>
                             </div>
                         </div>
-                        @if(userForm("id").value.isDefined) {
+                        @if(!userForm("id").value.isDefined) {
                             <div class="row">
                                 <div class=col-md-6>
                                     <div class="form-group">

@@ -50,4 +50,12 @@ object permissionGroupDao {
     permissionGroup <- dao.permissionsGroups if permissionGroup.permissionId === permissionId
     group <- groupDao.dao.groups if group.id === permissionGroup.groupId
   } yield group
+
+  /**
+   * Find the row that link group to permission by using the groupId and the permissionId.
+   * @param permissionId The id of the permission of the link
+   * @param groupId the id of the group of the link
+   * @return The query to find the PermissionGroup row that link permission to group
+   */
+  def findByPermissionAndGroupIds(permissionId : Int,groupId : Int) = dao.permissionsGroups filter (pg => pg.permissionId === permissionId && pg.groupId === groupId)
 }

@@ -1,6 +1,50 @@
 @(applicationForm : Form[models.entity.application.Application])(action : String)
 @breadCrumb = {
-
+    /<a href="/application">@Messages("applications")</a>
+    /<a href="#"><b>@action</b></a>
 }
 @main()(breadCrumb){
+    <div class="container">
+        @if(applicationForm.hasGlobalErrors) {
+            <div class="alert alert-warning" permissionView="alert">
+                <ul>
+                @for(error <- applicationForm.globalErrors) {
+                    <li>@error.message</li>
+                }
+                </ul>
+            </div>
+        }
+        <div class="panel panel-default">
+            <div class="panel-heading">@action</div>
+            <div class="panel-body">
+                <form permissionView="form" id="groupForm" action="@if(!applicationForm("id").value.isDefined){/application/createApplication}else{/application/updateApplication}" method="POST">
+                    <input type="hidden" name="@applicationForm("id").name" id="id" value="@applicationForm("id").value"/>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                            @helper.inputText(applicationForm("name"), '_label -> Messages("name"), '_id -> "name", 'class -> "form-control", 'maxlenght -> 25, 'required -> true,'_showConstraints -> false)
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                            @helper.inputText(applicationForm("refName"), '_label -> Messages("refName"), '_id -> "refName", 'class -> "form-control", 'maxlenght -> 45, 'required -> true,'_showConstraints -> false)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                            @helper.textarea(applicationForm("description"),'_label -> Messages("description"), '_id -> "description", 'class -> "form-control",'cols -> 50,'rows -> 4, 'maxlenght -> 25, 'required -> true,'_showConstraints -> false)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <input type="submit" value="@Messages("save")" class="btn btn-default btn-primary"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 }

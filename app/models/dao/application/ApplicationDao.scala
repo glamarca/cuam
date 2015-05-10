@@ -42,7 +42,7 @@ object applicationDao {
   def find(name : Column[Option[String]],refName : Column[Option[String]]) =
       dao.applications filter (app => {
         Case.If(name.isDefined).Then(app.name === name).Else(Some(true)) &&
-        Case.If(refName.isDefined).Then(app.refName === refName)
+        Case.If(refName.isDefined).Then(app.refName === refName).Else(Some(true))
       })
 
   /**

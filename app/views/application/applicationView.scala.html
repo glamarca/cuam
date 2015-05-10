@@ -1,6 +1,7 @@
 @(application : models.entity.application.Application, groupsList : Option[List[models.entity.group.Group]])
 @breadCrumb = {
-
+    /<a href="/application">@Messages("applications")</a>
+    /<a href="#"><b>@Messages("application")</b></a>
 }
 @main()(breadCrumb){
     <div class="container">
@@ -37,7 +38,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12 text-center">
-                        <a href="/application/applicationFormForm?id=@application.id.get" class="btn btn-default btn-primary">@Messages("update")</a>
+                        <a href="/application/applicationForm?id=@application.id.get" class="btn btn-default btn-primary">@Messages("update")</a>
                         <a href="/application/deleteApplication?id=@application.id.get" class="btn btn-default">@Messages("delete")</a>
                     </div>
                 </div>

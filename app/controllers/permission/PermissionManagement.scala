@@ -22,6 +22,7 @@ package controllers.permission
 import java.util.Locale
 
 import models.dao.application.applicationDao
+import models.dao.group.permissionGroupDao
 import models.dao.permission.permissionDao
 import models.entity.permission.Permission
 import play.api.Play.current
@@ -95,7 +96,8 @@ object PermissionManagement extends Controller {
    */
   def showPermission(id: Int) = DBAction { implicit request =>
     val permission = permissionDao.findById(id).first
-    Ok(permissionView(permission, None))
+    val groupsList = permissionGroupDao.findGroups(id).list
+    Ok(permissionView(permission, Some(groupsList)))
   }
 
   /**

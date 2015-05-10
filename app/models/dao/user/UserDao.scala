@@ -61,5 +61,7 @@ object userDao {
 
   def findUserNameByLastAndFirstNames(firstName : String,lastName : String) = dao.users filter (u => u.lastName === lastName && u.firstName === firstName) map (u => u.userName)
 
+  def findByUserLastAndFirstName(lastName : String,firstName : String) = dao.users filter (u => u.lastName === lastName && u.firstName === firstName)
+
 
 }

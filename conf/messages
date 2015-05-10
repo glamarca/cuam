@@ -1,6 +1,13 @@
 #A
 add=Ajouter
+application=Application
+applicationCreation=Création d''une applications
+applicationExists=Une application portant le même nom ou nom de référence existe déjà.
+applications=Applications
 applicationName=Common Users and Authorizations Management
+applicationsManagement=Gestion des applications
+applicationsManagementDescription=Gestion des applications référencées.
+applicationUpdate=Modification d''une application
 
 #B
 
@@ -24,6 +31,7 @@ groupCreation=Création d''un groupe
 groupExists=Un groupe portant le même nom ou nom de référence existe déjà.
 groups=Groupes
 groupsIncludingPermissionList=Liste des groupes dont fait partie la permission
+groupsListFromApplication=Liste des groupes liés à l'application
 groupsManagement=Gestion des groupes
 groupsManagementDescription=Gestion des groupes
 groupUpdate=Modification d''un groupe
