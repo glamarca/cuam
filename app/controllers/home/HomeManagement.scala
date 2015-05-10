@@ -16,11 +16,12 @@ limitations under the License.
 
 package controllers.home
 
+import controllers.security.Secured
 import play.api.mvc.{Action, Controller}
 
-object HomeManagement extends Controller {
+object HomeManagement extends Controller with Secured {
 
-  def index = Action {
+  def index = withAuth { username => implicit request =>
     Ok(views.html.index())
   }
 

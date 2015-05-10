@@ -8,6 +8,7 @@ applicationName=Common Users and Authorizations Management
 applicationsManagement=Gestion des applications
 applicationsManagementDescription=Gestion des applications référencées.
 applicationUpdate=Modification d''une application
+authentication=Autentification
 
 #B
 
@@ -36,8 +37,12 @@ groupsManagement=Gestion des groupes
 groupsManagementDescription=Gestion des groupes
 groupUpdate=Modification d''un groupe
 
+#I
+invalidUnameEmailOrPassword=Le nom d''utilisateur/email et/ou le mot de passe ne sont pas valides
+
 #L
 lastName=Nom
+login=Se connecter
 
 #M
 mainMenu=Menu principal
@@ -78,6 +83,8 @@ usersListFromGroup=Liste des utilisateurs du groupe
 userManagement=Gestion des utilisateurs
 usersManagementDescription=Gestion des utilisateurs
 userName=Nom d''utilisateur
+userNameOrEmail=Nom d''utilisateur/eMail
 users=Utilisateurs
 userUpdate=Modification d''un utilisateur
+
 

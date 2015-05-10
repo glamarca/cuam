@@ -63,5 +63,8 @@ object userDao {
 
   def findByUserLastAndFirstName(lastName : String,firstName : String) = dao.users filter (u => u.lastName === lastName && u.firstName === firstName)
 
+  def findByUserNameOrEmailAndPassword(userName : String,email : String,password : String) = dao.users filter (u => (u.userName === userName || u.email === email) && u.password === password)
+
+  def findByUserNameOrEmail(userName : String , email : String) = dao.users filter (u => u.userName === userName || u.email === email)
 
 }

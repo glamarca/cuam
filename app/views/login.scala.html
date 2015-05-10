@@ -1,0 +1,33 @@
+@(loginForm : Form[(String,String)])
+@breadCrumb={}
+@main()(breadCrumb){
+    <div class="container">
+        <div class="panel panel-default col-md-6 col-md-offset-3">
+            <div class="panel-heading">@Messages("authentication")</div>
+            <div class="panel-body">
+                <form id="loginForm" method="POST" action="/authenticate">
+                    <div class="row text-center">
+                        <div class="form-group col-md-6 col-md-offset-3">
+                            <label for="unameemail">@Messages("userNameOrEmail")</label>
+                            <input id="unameemail" type="text" name="unameemail" class="form-control" size="10"/>
+                        </div>
+                    </div>
+                    <div class="row text-center">
+                        <div class="form-group col-md-6 col-md-offset-3">
+                            <label for="login">@Messages("password")</label>
+                            <input id="password" type="password" name="password" class="form-control" size="10"/>
+                        </div>
+                    </div>
+                    <div class="row text-center">
+                        <div class="form-group col-md-2 col-md-offset-5">
+                            <button type="submit" class="btn btn-default btn-primary">@Messages("login")</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+    document.getElementById ( "unameemail" ).focus ( ) ;
+    </script>
+}

@@ -19,6 +19,12 @@
 # Home page
 GET         /                                            controllers.home.HomeManagement.index
 
+# Security
+GET         /login                                       controllers.security.Authentication.login
+GET         /logout                                      controllers.security.Authentication.logout
+
+POST        /authenticate                                controllers.security.Authentication.authenticate
+
 #Users
 GET         /user                                        controllers.user.UserManagement.userIndex
 GET         /user/showUser                               controllers.user.UserManagement.showUser(id : Int)

@@ -54,3 +54,6 @@ applicationsManagementDescription=Management of the referenced applications
 applicationUpdate=Application update
 groupsListFromApplication=List of the groups that belong to the application
 applicationsManagement=Applications management
+authentication=Athentication
+invalidUnameEmailOrPassword=User name/eMAil and/or password are incorrect
+userNameOrEmail=User name/eMail
