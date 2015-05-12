@@ -19,6 +19,9 @@ limitations under the License.
  */
 package controllers.user
 
+
+import java.nio.file.{Paths, Files}
+
 import models.dao.user.userDao
 import models.entity.user.User
 import play.api.Play.current
@@ -31,6 +34,8 @@ import play.api.mvc.{Action, Controller}
 import views.html.user._
 import org.mindrot.jbcrypt.BCrypt
 import play.api.libs.json.Json
+import play.Play.application
+import net.glxn.qrgen._
 
 
 object UserManagement extends Controller {
@@ -63,6 +68,18 @@ object UserManagement extends Controller {
     val user = (userDao.findById(id)).list.head
     val userProfileForm = UserForm(user.id, Some(user.userName), user.lastName, user.firstName, None, Some(user.email))
     Ok(userView(userProfileForm))
+  }
+
+  def getUserQrCodeImage(username: String) = Action {
+    val MimeType = "image/png"
+    try {
+      val qrCodeImageDate: Array[Byte] = Files.readAllBytes(Paths.get(getUserQrCodePath(username)))
+        Ok(qrCodeImageDate).as(MimeType)
+    }
+    catch {
+      case e: IllegalArgumentException =>
+        BadRequest("Couldn’t generate image. Error: " + e.getMessage)
+    }
   }
 
   /**
@@ -109,10 +126,10 @@ object UserManagement extends Controller {
         }
         else {
           val user = (userDao.findById(form.userId.get)).list.head
-          userDao.findById(form.userId.get).map(u => (u.userName,u.lastName,u.firstName,u.email,u.updateDate,u.updatingUser))
-            .update((form.userName.get,form.lastName.get,form.firstName.get,form.email.get,new java.sql.Date(new java.util.Date().getTime()), "user"))
+          userDao.findById(form.userId.get).map(u => (u.userName, u.lastName, u.firstName, u.email, u.updateDate, u.updatingUser))
+            .update((form.userName.get, form.lastName.get, form.firstName.get, form.email.get, new java.sql.Date(new java.util.Date().getTime()), "user"))
           Redirect(routes.UserManagement.showUser(form.userId.get))
-          }
+        }
       }
     )
   }
@@ -174,30 +191,39 @@ object UserManagement extends Controller {
    * @param lastNameCandidate
    * @return
    */
-  def userLastNameCompletion(lastNameCandidate : String) = DBAction { implicit request =>
-      val lastNamesList = userDao.findLastNameLike(lastNameCandidate).list
-      Ok(Json.toJson(lastNamesList))
+  def userLastNameCompletion(lastNameCandidate: String) = DBAction { implicit request =>
+    val lastNamesList = userDao.findLastNameLike(lastNameCandidate).list
+    Ok(Json.toJson(lastNamesList))
   }
 
-  def userFirstNameCompletion(firstNameCandidate : String) = DBAction { implicit request =>
-      val firstNamesList = userDao.findFirstNameLike(firstNameCandidate).list
-      Ok(Json.toJson(firstNamesList))
+  def userFirstNameCompletion(firstNameCandidate: String) = DBAction { implicit request =>
+    val firstNamesList = userDao.findFirstNameLike(firstNameCandidate).list
+    Ok(Json.toJson(firstNamesList))
   }
 
-  def findUserNameByLastAndFirstNames(lastName : String , firstName : String)  = DBAction { implicit request =>
-    val userNameList = userDao.findUserNameByLastAndFirstNames(lastName,firstName).list
+  def findUserNameByLastAndFirstNames(lastName: String, firstName: String) = DBAction { implicit request =>
+    val userNameList = userDao.findUserNameByLastAndFirstNames(lastName, firstName).list
     Ok(Json.toJson(userNameList))
   }
 
-  def findUserLastNameAndFirstNameByUserName(userName : String) = DBAction { implicit request =>
-    val userLastAndFirstNameTuple = userDao.findByUserName(userName).map(u => (u.lastName,u.firstName)).first
+  def findUserLastNameAndFirstNameByUserName(userName: String) = DBAction { implicit request =>
+    val userLastAndFirstNameTuple = userDao.findByUserName(userName).map(u => (u.lastName, u.firstName)).first
 
-    Ok(Json.toJson(Json.arr(List(userLastAndFirstNameTuple._1,userLastAndFirstNameTuple._2))))
+    Ok(Json.toJson(Json.arr(List(userLastAndFirstNameTuple._1, userLastAndFirstNameTuple._2))))
   }
 
-  def testAutoCompletion(str : String) = Action { implicit request =>
-    val listeString = "CUAM"::"APP2"::Nil
+  def testAutoCompletion(str: String) = Action { implicit request =>
+    val listeString = "CUAM" :: "APP2" :: Nil
     Ok(Json.toJson(listeString))
   }
 
+
+  def getUserQrCodePath(username: String) : String = {
+    val qrCodeDataPath = s"${application.configuration.getString("qrCodesDirPath")}/$username.png"
+    if (!Files.exists(Paths.get(qrCodeDataPath))) {
+      val qrCodeFile = new java.io.File(qrCodeDataPath)
+      Files.copy(QRCode.from(BCrypt.hashpw(username, BCrypt.gensalt)).file.toPath,qrCodeFile.toPath)
+    }
+    qrCodeDataPath
+  }
 }

@@ -38,8 +38,7 @@ object cuamBuild extends Build {
     "org.webjars" %% "webjars-play" % "2.3.0-2",
     "org.webjars.bower" % "bootstrap" % "3.3.4",
     "org.webjars.bower" % "jquery" % "2.1.3",
-    "org.webjars.bower" % "bootswatch" % "3.3.4",
-    "org.webjars.bower" % "typeahead.js" % "0.11.1"
+    "org.webjars.bower" % "bootswatch" % "3.3.4"
   )
 
   val dbLibraries = Seq(
@@ -52,12 +51,16 @@ object cuamBuild extends Build {
     "org.mindrot" % "jbcrypt" % "0.3m"
   )
 
+  val utilLibraries = Seq(
+    "net.glxn" % "qrgen" % "1.4"
+  )
+
 
   lazy val root = Project("cuam", file(".")).enablePlugins(PlayScala) settings(
     name := """cuam""",
     version := "1.0-SNAPSHOT",
     scalaVersion := "2.11.6",
     resolvers += "Sonatype snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/",
-    libraryDependencies ++= basicLibraries ++ testLibraries ++ htmlLibraries ++ dbLibraries ++ securityLibraries
+    libraryDependencies ++= basicLibraries ++ testLibraries ++ htmlLibraries ++ dbLibraries ++ securityLibraries ++ utilLibraries
     )
 }

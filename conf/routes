@@ -30,6 +30,7 @@ GET         /user                                        controllers.user.UserMa
 GET         /user/showUser                               controllers.user.UserManagement.showUser(id : Int)
 GET         /user/userForm                               controllers.user.UserManagement.showUserForm(id : Option[Int])
 GET         /user/deleteUser                             controllers.user.UserManagement.deleteUser(id : Int)
+GET         /user/getUserQrCodeImage                     controllers.user.UserManagement.getUserQrCodeImage(username : String)
 
 POST        /user/findUser                               controllers.user.UserManagement.findUser
 POST        /user/createUser                             controllers.user.UserManagement.createUser
