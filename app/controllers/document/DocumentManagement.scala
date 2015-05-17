@@ -99,7 +99,7 @@ object DocumentManagement extends Controller{
     val documentUser = DocumentUser(None,userId,updatedQrCode.id.get)
     documentUserDao.dao.documentsUsers += documentUser
     val qrCodeDataPath = s"${application.configuration.getString("qrCodesDirPath")}/${updatedQrCode.fileName}.png"
-    Files.copy(QRCode.from(BCrypt.hashpw(userName, BCrypt.gensalt)).file.toPath,Paths.get(qrCodeDataPath))
+    Files.copy(QRCode.from(username).file.toPath,Paths.get(qrCodeDataPath))
     updatedQrCode
   }
 }
