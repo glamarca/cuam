@@ -1,4 +1,4 @@
-@(applicationsList : Option[List[models.entity.application.Application]])
+@(applicationsList : Option[List[models.entity.application.Application]])(implicit session : Session)
 @breadCrumb = {
     /<a href="#"><b>@Messages("applications")</b></a>
 }

@@ -17,7 +17,8 @@
 # ~~~~
 
 # Home page
-GET         /                                            controllers.home.HomeManagement.index
+GET         /                                            controllers.home.HomeManagement.indexWithUserExistsTest
+GET         /home                                        controllers.home.HomeManagement.index(message : Option[String])
 
 # Security
 GET         /login                                       controllers.security.Authentication.login
@@ -30,11 +31,13 @@ GET         /user                                        controllers.user.UserMa
 GET         /user/showUser                               controllers.user.UserManagement.showUser(id : Int)
 GET         /user/userForm                               controllers.user.UserManagement.showUserForm(id : Option[Int])
 GET         /user/deleteUser                             controllers.user.UserManagement.deleteUser(id : Int)
-GET         /user/getUserQrCodeImage                     controllers.user.UserManagement.getUserQrCodeImage(username : String)
+GET         /user/passwordForm                           controllers.user.UserManagement.showPasswordForm(userId : Int)
 
 POST        /user/findUser                               controllers.user.UserManagement.findUser
 POST        /user/createUser                             controllers.user.UserManagement.createUser
 POST        /user/updateUser                             controllers.user.UserManagement.updateUser
+POST        /user/newPasswordSubdmit                     controllers.user.UserManagement.updatePassword
+POST        /user/uploadUserPicture                      controllers.user.UserManagement.uploadPicture
 
 #JavaScript
 GET         /user/userLastNameCompletion                 controllers.user.UserManagement.userLastNameCompletion(candidate : String)
@@ -75,6 +78,9 @@ GET         /application/deleteApplication               controllers.application
 POST        /application/findApplication                 controllers.application.ApplicationManagement.findApplication
 POST        /application/createApplication               controllers.application.ApplicationManagement.createApplication
 POST        /application/updateApplication               controllers.application.ApplicationManagement.updateApplication
+
+#Document
+GET         /document/userDocument                       controllers.document.DocumentManagement.getUserDocument(userId : Option[Int],documentName : String)
 
 
 # Map static resources from the /public folder to the /assets URL path

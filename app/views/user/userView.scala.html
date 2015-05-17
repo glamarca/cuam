@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 *@
-@(userForm: controllers.user.UserForm)
+@(userForm: controllers.user.UserForm)(implicit session : Session)
     @breadCrumb = {
         /<a href="/user">@Messages("users")</a>
         /<a href="#"><b>@Messages("user")</b></a>
@@ -25,7 +25,7 @@ limitations under the License.
         <div class="media">
             <div class="media-left">
                 <a href="#">
-                    <img class="media-object" src="@routes.Assets.at("images/user.png")" alt="@Messages("picture")"/>
+                    <img class="media-object" src="/document/userDocument?userId=@userForm.userId.getOrElse(None)&documentName=@Messages("document.userPicture")" alt="@Messages("picture")"/>
                 </a>
             </div>
             <div class="media-body">
@@ -51,16 +51,34 @@ limitations under the License.
             </div>
         </div>
         <br/>
-        <div class="media">
-            <div class="media-center">
-                <img class="media-object" src="/user/getUserQrCodeImage?username=@userForm.userName.get" alt="@Messages("qrCode")"/>
-            </div>
+        <div>
+            <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#qrCodeModal">
+                @Messages("showQrCode")
+            </button>
         </div>
         <br/>
         <div class="row">
             <div class="col-md2 col-md-offset-5">
                 <a class="btn btn-default btn-primary" href="/user/userForm?id=@userForm.userId.get">@Messages("update")</a>
                 <a class="btn btn-default" href="/user/deleteUser?id=@userForm.userId.get">@Messages("delete")</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="qrCodeModal" tabindex="-1" role="dialog" aria-labelledby="qrCodeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="media">
+                        <div class="media-center">
+                            <img class="media-object" src="/document/userDocument?userId=@userForm.userId.getOrElse(None)&documentName=@Messages("document.qrCode")" alt="@Messages("qrCode")"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">@Messages("close")</button>
+                </div>
             </div>
         </div>
     </div>

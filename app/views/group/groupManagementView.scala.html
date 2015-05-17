@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 *@
-@(searchForm : Form[controllers.group.SearchGroupForm],groupsList : Option[List[models.entity.group.Group]],applicationsList : List[models.entity.application.Application])
+@(searchForm : Form[controllers.group.SearchGroupForm],groupsList : Option[List[models.entity.group.Group]],applicationsList : List[models.entity.application.Application])(implicit session : Session)
     @breadCrumb = {
         /<a href="#"><b>@Messages("groups")</b></a>
     }

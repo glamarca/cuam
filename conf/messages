@@ -11,13 +11,16 @@ applicationUpdate=Modification d''une application
 authentication=Autentification
 
 #B
+badOldPassword=Ancien mot de passe incorrect.
 
 #C
+close=Fermer
 creationDate=Date de création
 
 #D
 delete=Effacer
 description=Description
+defaultUserPicture=defaultUserPicture
 
 #E
 email=eMail
@@ -43,6 +46,7 @@ invalidUnameEmailOrPassword=Le nom d''utilisateur/email et/ou le mot de passe ne
 #L
 lastName=Nom
 login=Se connecter
+logout=Fin de session
 
 #M
 mainMenu=Menu principal
@@ -53,10 +57,18 @@ messageFooterContact=<a href="https://github.com/glamarca/cuam"style="text-decor
 name=Nom
 nonEqualsEmails=Les deux eMail ne correspondent pas.
 nonEqualsPasswords=Les deux mots de passe ne correspondent pas.
+newPassword=Nouveau mot de passe
+newPasswordConfirmation=Confirmation du nouveau mot de passe
+
+#O
+oldPassword=Ancien mot de passe
 
 #P
 password=Mot de Passe
 passwordConfirmation=Confirmation du mot de passe
+
+#Q
+qrCode=QR Code
 
 #R
 refName=Nom de référence
@@ -73,6 +85,10 @@ permissionUpdate=Modification d''une permission
 save=Enregistrer
 search=Rechercher
 searching=Recherche
+showQrCode=Afficher le QR Code
+
+#T
+tempAdminWarning=Vous êtes le premier utilisateur à se connecter à l''application.<br/>Un utilisateur "admin" est créé par défaut("admin","admin").<br/>Veillez à créer un utilisateur administrateur et supprimer celui par défault.
 
 #U
 update=Modifier
@@ -84,7 +100,13 @@ userManagement=Gestion des utilisateurs
 usersManagementDescription=Gestion des utilisateurs
 userName=Nom d''utilisateur
 userNameOrEmail=Nom d''utilisateur/eMail
+userPasswordUpdate=Mise à jour du mot de passe
 users=Utilisateurs
 userUpdate=Modification d''un utilisateur
+
+
+#Document Names
+document.qrCode="QrCode"
+document.userPicture="UserPicture"
 
 

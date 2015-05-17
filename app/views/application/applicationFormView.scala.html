@@ -1,4 +1,4 @@
-@(applicationForm : Form[models.entity.application.Application])(action : String)
+@(applicationForm : Form[models.entity.application.Application])(action : String)(implicit session : Session)
 @breadCrumb = {
     /<a href="/application">@Messages("applications")</a>
     /<a href="#"><b>@action</b></a>

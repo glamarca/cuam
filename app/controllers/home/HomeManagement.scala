@@ -16,13 +16,33 @@ limitations under the License.
 
 package controllers.home
 
+import controllers.home
+import controllers.security.Authentication._
 import controllers.security.Secured
-import play.api.mvc.{Action, Controller}
+import models.dao.user.userDao
+import models.entity.user.User
+import play.api.db.slick.Config.driver.simple._
+import play.api.db.slick._
+import play.api.i18n.Messages
+import play.api.mvc.{Security, Controller}
+import org.mindrot.jbcrypt.BCrypt
 
 object HomeManagement extends Controller with Secured {
 
-  def index = withAuth { username => implicit request =>
-    Ok(views.html.index())
+  def index(message : Option[String]) = withAuth { username => implicit request =>
+    Ok(views.html.index(message))
   }
 
+  def indexWithUserExistsTest = DBAction { implicit request => {
+    if (userDao.dao.users.list.isEmpty) {
+      val date = new java.sql.Date(new java.util.Date().getTime())
+      userDao.dao.users += User(None, "admin", BCrypt.hashpw("admin", BCrypt.gensalt), Some("admin"), Some("admin"), "admin@cuam.org", date, date, "init")
+      Redirect(home.routes.HomeManagement.index(Some(Messages("tempAdminWarning")))).withSession(Security.username -> "admin")
+    }
+    else {
+      Redirect(routes.HomeManagement.index(None)).withNewSession
+    }
+  }
+
+  }
 }

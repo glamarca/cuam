@@ -19,9 +19,7 @@ limitations under the License.
  */
 package controllers.user
 
-
-import java.nio.file.{Paths, Files}
-
+import models.dao.fileStorage.documentUserDao
 import models.dao.user.userDao
 import models.entity.user.User
 import play.api.Play.current
@@ -31,11 +29,11 @@ import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick._
 import play.api.i18n.Messages
 import play.api.mvc.{Action, Controller}
+import util.fileStorage
 import views.html.user._
 import org.mindrot.jbcrypt.BCrypt
 import play.api.libs.json.Json
-import play.Play.application
-import net.glxn.qrgen._
+import controllers.document.DocumentManagement._
 
 
 object UserManagement extends Controller {
@@ -47,8 +45,17 @@ object UserManagement extends Controller {
       "lastName" -> default(optional(text), None),
       "firstName" -> default(optional(text), None),
       "password" -> default(optional(text), None),
-      "email" -> default(optional(email), None)
+      "email" -> default(optional(email), None),
+      "pictureFileName" -> default(optional(text),None)
     )(UserForm.apply)(UserForm.unapply)
+  )
+
+  val passwordForm = Form(
+  mapping(
+    "userId" -> number,
+    "oldPassword" -> default(optional(text), None),
+    "newPassword" -> default(optional(text), None)
+  )(PasswordForm.apply)(PasswordForm.unapply)
   )
 
   /**
@@ -66,21 +73,50 @@ object UserManagement extends Controller {
    */
   def showUser(id: Int) = DBAction { implicit request =>
     val user = (userDao.findById(id)).list.head
-    val userProfileForm = UserForm(user.id, Some(user.userName), user.lastName, user.firstName, None, Some(user.email))
+    val userProfileForm = UserForm(user.id, Some(user.userName), user.lastName, user.firstName, None, Some(user.email),None)
     Ok(userView(userProfileForm))
   }
 
-  def getUserQrCodeImage(username: String) = Action {
-    val MimeType = "image/png"
-    try {
-      val qrCodeImageDate: Array[Byte] = Files.readAllBytes(Paths.get(getUserQrCodePath(username)))
-        Ok(qrCodeImageDate).as(MimeType)
-    }
-    catch {
-      case e: IllegalArgumentException =>
-        BadRequest("Couldn’t generate image. Error: " + e.getMessage)
-    }
+
+  def showPasswordForm(userId : Int) = Action { implicit request =>
+    Ok(userPasswordFormView(passwordForm.bind(Map("userId" -> userId.toString))))
   }
+
+  /**
+   * Update the user password.
+   * If the oldPassord is not correct , a message is sent to the user
+   * @return The user view
+   */
+  def updatePassword = DBAction { implicit request =>
+    passwordForm.bindFromRequest.fold(
+      formWithError => {
+        BadRequest(userPasswordFormView(formWithError))
+      },
+      form => {
+        val user = userDao.findById(form.userId).first
+        if(!BCrypt.checkpw(form.oldPassword.get,user.password)){
+          BadRequest(userPasswordFormView(passwordForm.fill(form).withGlobalError(Messages("badOldPassword"))))
+        }
+        else {
+          userDao.findById(form.userId).map(u => (u.password,u.updateDate,u.updatingUser))
+            .update((BCrypt.hashpw(form.newPassword.get, BCrypt.gensalt),new java.sql.Date(new java.util.Date().getTime()),user.userName))
+          Redirect(routes.UserManagement.showUser(form.userId))
+        }
+      }
+    )
+  }
+
+  def uploadPicture = Action(parse.multipartFormData){implicit request =>
+    request.body.file("picture").map { picture =>
+      import java.io.File
+      val filename = fileStorage.getHashedName(picture.filename)
+      picture.ref.moveTo(new File(s"/tmp/picture/$filename"))
+      val userFormTemp = userForm.bindFromRequest.get.copy(userPicture = Some(filename))
+      val action = if(userFormTemp.userId.isDefined) Messages("updateUser") else Messages("userCreation")
+      Ok(userFormView(userForm.fill(userFormTemp))(action))
+    }.getOrElse(BadRequest)
+  }
+
 
   /**
    * Show the form used to create or update a user.
@@ -101,13 +137,15 @@ object UserManagement extends Controller {
   def showUserForm(id: Option[Int]) = DBAction { implicit request =>
     if (id.isDefined) {
       val user = (userDao.findById(id.get)).list.head
-      val form = userForm fill (UserForm(user.id, Some(user.userName), user.lastName, user.firstName, None, Some(user.email)))
-      Ok(UserFormView(form)(Messages("userUpdate")))
+      val form = userForm fill (UserForm(user.id, Some(user.userName), user.lastName, user.firstName, None, Some(user.email),None))
+      Ok(userFormView(form)(Messages("userUpdate")))
     }
     else {
-      Ok(UserFormView(userForm)(Messages("userCreation")))
+      Ok(userFormView(userForm)(Messages("userCreation")))
     }
   }
+
+
 
   /**
    * Update a user with the informations in the form.
@@ -117,15 +155,19 @@ object UserManagement extends Controller {
   def updateUser = DBAction { implicit request =>
     userForm.bindFromRequest.fold(
       formWithErrors => {
-        BadRequest(UserFormView(formWithErrors)(Messages("userUpdate")))
+        BadRequest(userFormView(formWithErrors)(Messages("userUpdate")))
       },
       form => {
         val userExist = userDao.userNameOrEmaiMatch(form.userName.get, form.email.get).list
         if (!userExist.isEmpty && userExist(0).id != form.userId) {
-          BadRequest(UserFormView(userForm.fill(form).withGlobalError(Messages("userExists")))(Messages("userUpdate")))
+          BadRequest(userFormView(userForm.fill(form).withGlobalError(Messages("userExists")))(Messages("userUpdate")))
         }
         else {
           val user = (userDao.findById(form.userId.get)).list.head
+          if(documentUserDao.findDocumentByUserAndDocumentName(user.id.get,Messages("document.qrCode")).list.isEmpty)createUserQrCode(user.id.get,user.userName)
+          val userPictureDocument = documentUserDao.findDocumentByUserAndDocumentName(user.id.get,Messages("document.userPicture")).list
+          if(userPictureDocument.isEmpty) createUserPicture(form.userId.get,form.userPicture)
+          else if(userPictureDocument.head.fileName != form.userPicture.getOrElse(false)) updatePicture(userPictureDocument.head,form.userPicture)
           userDao.findById(form.userId.get).map(u => (u.userName, u.lastName, u.firstName, u.email, u.updateDate, u.updatingUser))
             .update((form.userName.get, form.lastName.get, form.firstName.get, form.email.get, new java.sql.Date(new java.util.Date().getTime()), "user"))
           Redirect(routes.UserManagement.showUser(form.userId.get))
@@ -143,17 +185,20 @@ object UserManagement extends Controller {
   def createUser = DBAction { implicit request =>
     userForm.bindFromRequest.fold(
       formWithErrors => {
-        BadRequest(UserFormView(formWithErrors)(Messages("userCreation")))
+        BadRequest(userFormView(formWithErrors)(Messages("userCreation")))
       },
       form => {
         val userExist = userDao.userNameOrEmaiMatch(form.userName.get, form.email.get).list
         if (!userExist.isEmpty) {
-          BadRequest(UserFormView(userForm.fill(form).withGlobalError(Messages("userExists")))(Messages("userCreation")))
+          BadRequest(userFormView(userForm.fill(form).withGlobalError(Messages("userExists")))(Messages("userCreation")))
         }
         else {
           val date = new java.sql.Date(new java.util.Date().getTime())
           userDao.dao.users += User(None, form.userName.get, BCrypt.hashpw(form.password.get, BCrypt.gensalt), form.lastName, form.firstName, form.email.get, date, date, "user")
-          Redirect(routes.UserManagement.showUser(userDao.findByUserName(form.userName.get).first.id.get))
+          val newUser = userDao.findByUserName(form.userName.get).first
+          createUserQrCode(newUser.id.get,newUser.userName)
+          createUserPicture(newUser.id.get,form.userPicture)
+          Redirect(routes.UserManagement.showUser(newUser.id.get))
         }
       }
     )
@@ -208,22 +253,11 @@ object UserManagement extends Controller {
 
   def findUserLastNameAndFirstNameByUserName(userName: String) = DBAction { implicit request =>
     val userLastAndFirstNameTuple = userDao.findByUserName(userName).map(u => (u.lastName, u.firstName)).first
-
     Ok(Json.toJson(Json.arr(List(userLastAndFirstNameTuple._1, userLastAndFirstNameTuple._2))))
   }
 
   def testAutoCompletion(str: String) = Action { implicit request =>
     val listeString = "CUAM" :: "APP2" :: Nil
     Ok(Json.toJson(listeString))
-  }
-
-
-  def getUserQrCodePath(username: String) : String = {
-    val qrCodeDataPath = s"${application.configuration.getString("qrCodesDirPath")}/$username.png"
-    if (!Files.exists(Paths.get(qrCodeDataPath))) {
-      val qrCodeFile = new java.io.File(qrCodeDataPath)
-      Files.copy(QRCode.from(BCrypt.hashpw(username, BCrypt.gensalt)).file.toPath,qrCodeFile.toPath)
-    }
-    qrCodeDataPath
   }
 }

@@ -16,7 +16,7 @@ limitations under the License.
 @(group : models.entity.group.Group ,
         permissionsList : Option[List[models.entity.permission.Permission]],
         usersList : Option[List[models.entity.user.User]],
-        allPermissionsList : Option[List[models.entity.permission.Permission]])
+        allPermissionsList : Option[List[models.entity.permission.Permission]])(implicit session : Session)
     @breadCrumb = {
         /<a href="/group">@Messages("groups")</a>
         /<a href="#"><b>@Messages("group")</b></a>

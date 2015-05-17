@@ -19,5 +19,6 @@ limitations under the License.
  */
 package controllers.user
 
-case class UserForm(userId: Option[Int], userName: Option[String], lastName: Option[String], firstName: Option[String], password: Option[String], email: Option[String])
+case class UserForm(userId: Option[Int], userName: Option[String], lastName: Option[String], firstName: Option[String], password: Option[String], email: Option[String],userPicture : Option[String])
 
+case class PasswordForm(userId : Int,oldPassword : Option[String],newPassword : Option[String])

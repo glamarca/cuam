@@ -13,12 +13,19 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 *@
-@()
+@(message : Option[String])(implicit session : Session)
     @breadCrumb = {
         <p></p>
     }
     @main()(breadCrumb) {
         <div class="container">
+            @if(message.isDefined){
+                <div class="alert alert-danger" role="alert">
+                    <ul>
+                    @Html(message.get)
+                    </ul>
+                </div>
+            }
             <div class="row">
                 <div class="col-md-6 col-md-offset-3">
                     <div class="panel panel-default">

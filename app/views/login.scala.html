@@ -1,4 +1,4 @@
-@(loginForm : Form[(String,String)])
+@(loginForm : Form[(String,String)])(implicit session : Session)
 @breadCrumb={}
 @main()(breadCrumb){
     <div class="container">
@@ -19,7 +19,7 @@
                         </div>
                     </div>
                     <div class="row text-center">
-                        <div class="form-group col-md-2 col-md-offset-5">
+                        <div class="form-group col-md-6 col-md-offset-3">
                             <button type="submit" class="btn btn-default btn-primary">@Messages("login")</button>
                         </div>
                     </div>

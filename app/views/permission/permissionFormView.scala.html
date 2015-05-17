@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 *@
-@(permissionForm : Form[models.entity.permission.Permission],applicationsList : List[models.entity.application.Application])(action : String)
+@(permissionForm : Form[models.entity.permission.Permission],applicationsList : List[models.entity.application.Application])(action : String)(implicit session : Session)
     @breadCrumb = {
     /<a href="/permission">@Messages("permissions")</a>
     /<a href="#"><b>@action</b></a>

@@ -11,9 +11,11 @@ tmp
 /RUNNING_PID
 /.settings
 /h2/*
+/data/QrCodes/*
 
 
 
 
 #Exception
 !/h2/.gitignore
+!/data/QrCodes/.gitignore
