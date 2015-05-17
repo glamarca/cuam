@@ -28,7 +28,7 @@ import controllers.{home,security}
 import play.api.mvc.Security
 import org.mindrot.jbcrypt.BCrypt
 
-object Authentication extends Controller{
+object Authentication extends Controller {
 
   val loginForm = Form(
     tuple(

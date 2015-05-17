@@ -149,10 +149,12 @@ object PermissionManagement extends Controller {
 
   /**
    * Delete a permission identified by is ID.
+   * Also delete all links to the permission Table (permissionGroup,...)
    * @param id The id of the permission to delete.
    * @return The index page of the permission management.
    */
   def deletePermission(id: Int) = DBAction { implicit request =>
+    permissionGroupDao.findPermissions(id).mutate(_.delete)
     permissionDao.findById(id).mutate(_.delete)
     Redirect(routes.PermissionManagement.permissionIndex())
   }

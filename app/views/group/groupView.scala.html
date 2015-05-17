@@ -16,7 +16,7 @@ limitations under the License.
 @(group : models.entity.group.Group ,
         permissionsList : Option[List[models.entity.permission.Permission]],
         usersList : Option[List[models.entity.user.User]],
-        allPermissionsList : Option[List[models.entity.permission.Permission]])(implicit session : Session)
+        allPermissionsList : Option[List[models.entity.permission.Permission]],messages : Option[List[String]])(implicit session : Session)
     @breadCrumb = {
         /<a href="/group">@Messages("groups")</a>
         /<a href="#"><b>@Messages("group")</b></a>
@@ -25,6 +25,15 @@ limitations under the License.
     <div class="container">
         <h3><span class="label label-primary">@group.name</span></h3>
         <div class="panel panel-default">
+            @if(messages.isDefined){
+                <div class="alert alert-warning" permissionView="alert">
+                    <ul>
+                    @for(message <- messages.get) {
+                        <li>@message</li>
+                    }
+                    </ul>
+                </div>
+            }
             <div class="panel-body">
                 <div class="row">
                     <div class="col-md-6">

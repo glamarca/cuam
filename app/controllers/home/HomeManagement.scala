@@ -17,7 +17,6 @@ limitations under the License.
 package controllers.home
 
 import controllers.home
-import controllers.security.Authentication._
 import controllers.security.Secured
 import models.dao.user.userDao
 import models.entity.user.User

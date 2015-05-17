@@ -19,7 +19,8 @@ import models.dao.application.applicationDao
 import models.dao.group.{groupDao, permissionGroupDao, userGroupDao}
 import models.dao.permission.permissionDao
 import models.dao.user.userDao
-import models.entity.group.{UserGroup, PermissionGroup, Group}
+import models.entity.group.{Group, PermissionGroup, UserGroup}
+import play.api.Play.current
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.db.slick.Config.driver.simple._
@@ -27,11 +28,12 @@ import play.api.db.slick._
 import play.api.i18n.Messages
 import play.api.mvc.{Action, Controller}
 import views.html.group._
-import play.api.Play.current
+
+import scala.collection.mutable.ListBuffer
 
 object GroupManagement extends Controller {
 
-  val allApplicationsList = DB.withSession { implicit request =>
+  def  allApplicationsList = DB.withSession { implicit request =>
     applicationDao.dao.applications.list
   }
 
@@ -42,7 +44,7 @@ object GroupManagement extends Controller {
     mapping(
       "name" -> default(optional(text), None),
       "refNale" -> default(optional(text), None),
-      "applicationID" -> default(optional(number),None)
+      "applicationID" -> default(optional(number), None)
     )(SearchGroupForm.apply)(SearchGroupForm.unapply)
   )
 
@@ -58,7 +60,7 @@ object GroupManagement extends Controller {
       "updateDate" -> default(sqlDate, new java.sql.Date(new java.util.Date().getTime)),
       "updatingUser" -> default(text, "user"),
       "description" -> default(optional(text), None),
-       "applicationId" -> number
+      "applicationId" -> number
     )(Group.apply)(Group.unapply)
   )
 
@@ -66,7 +68,7 @@ object GroupManagement extends Controller {
    * Show the index page of groups management
    */
   def groupIndex = Action { implicit request =>
-    Ok(groupManagementView(searchGroupForm,None,allApplicationsList))
+    Ok(groupManagementView(searchGroupForm, None, allApplicationsList))
   }
 
   /**
@@ -79,7 +81,7 @@ object GroupManagement extends Controller {
     val permissions = permissionGroupDao.findPermissions(id).list
     val users = userGroupDao.findUsers(id).list
     val allPermissions = permissionDao.dao.permissions.list
-    Ok(groupView(group, Some(permissions), Some(users),Some(allPermissions)))
+    Ok(groupView(group, Some(permissions), Some(users), Some(allPermissions),None))
   }
 
   /**
@@ -96,10 +98,10 @@ object GroupManagement extends Controller {
     if (id.isDefined) {
       val group = groupDao.findById(id.get).first
       val filledGroupForm = groupForm.fill(group)
-      Ok(groupFormView(filledGroupForm,allApplicationsList)(Messages("groupUpdate")))
+      Ok(groupFormView(filledGroupForm, allApplicationsList)(Messages("groupUpdate")))
     }
     else {
-      Ok(groupFormView(groupForm,allApplicationsList)(Messages("groupCreation")))
+      Ok(groupFormView(groupForm, allApplicationsList)(Messages("groupCreation")))
     }
   }
 
@@ -110,11 +112,11 @@ object GroupManagement extends Controller {
   def findGroup = DBAction { implicit request =>
     searchGroupForm.bindFromRequest.fold(
       formWithErrors => {
-        BadRequest(groupManagementView(formWithErrors,None,allApplicationsList))
+        BadRequest(groupManagementView(formWithErrors, None, allApplicationsList))
       },
       validForm => {
         val groupsList = groupDao.findBySearchForm(validForm).list
-        Ok(groupManagementView(searchGroupForm.fill(validForm),Some(groupsList),allApplicationsList))
+        Ok(groupManagementView(searchGroupForm.fill(validForm), Some(groupsList), allApplicationsList))
       }
     )
   }
@@ -130,15 +132,15 @@ object GroupManagement extends Controller {
   def createGroup = DBAction { implicit request =>
     groupForm.bindFromRequest.fold(
       formWithErrors => {
-        BadRequest(groupFormView(formWithErrors,allApplicationsList)(Messages("groupCreation")))
+        BadRequest(groupFormView(formWithErrors, allApplicationsList)(Messages("groupCreation")))
       },
       validForm => {
         val groupExists = !groupDao.findByNameOrRefName(validForm.name, validForm.refName).list.isEmpty
         if (groupExists) {
-          BadRequest(groupFormView(groupForm.fill(validForm).withGlobalError(Messages("groupExists")),allApplicationsList)(Messages("groupCreation")))
+          BadRequest(groupFormView(groupForm.fill(validForm).withGlobalError(Messages("groupExists")), allApplicationsList)(Messages("groupCreation")))
         }
         else {
-          val group = Group(validForm.id, validForm.name, validForm.refName, new java.sql.Date(new java.util.Date().getTime), validForm.updateDate, validForm.updatingUser, validForm.description,validForm.applicationId)
+          val group = Group(validForm.id, validForm.name, validForm.refName, new java.sql.Date(new java.util.Date().getTime), validForm.updateDate, validForm.updatingUser, validForm.description, validForm.applicationId)
           groupDao.dao.groups += group
           Redirect(routes.GroupManagement.showGroup(groupDao.findByRefName(validForm.refName).first.id.get))
         }
@@ -151,20 +153,20 @@ object GroupManagement extends Controller {
    * If the name or the ref name is changed, and the one of the new ones is already in use, a message is sent to the user.
    * @return The group view filled with the updated user
    */
-  def updateGroup = DBAction {implicit request =>
+  def updateGroup = DBAction { implicit request =>
     groupForm.bindFromRequest.fold(
       formWithErrors => {
-        BadRequest(groupFormView(formWithErrors,allApplicationsList)(Messages("groupUpdate")))
+        BadRequest(groupFormView(formWithErrors, allApplicationsList)(Messages("groupUpdate")))
       },
       validForm => {
         val groupExists = groupDao.findByNameOrRefName(validForm.name, validForm.refName).list
         if (!groupExists.isEmpty && groupExists(0).id != validForm.id) {
-          BadRequest(groupFormView(groupForm.fill(validForm).withGlobalError(Messages("groupExists")),allApplicationsList)(Messages("groupUpdate")))
+          BadRequest(groupFormView(groupForm.fill(validForm).withGlobalError(Messages("groupExists")), allApplicationsList)(Messages("groupUpdate")))
         }
         else {
           groupDao.findById(validForm.id.get)
-            .map(g => (g.name,g.refName,g.descritpion,g.updatingUser,g.updateDate,g.applicationId))
-          .update((validForm.name,validForm.refName,validForm.description.orNull,validForm.updatingUser,validForm.updateDate,validForm.applicationId))
+            .map(g => (g.name, g.refName, g.descritpion, g.updatingUser, g.updateDate, g.applicationId))
+            .update((validForm.name, validForm.refName, validForm.description.orNull, validForm.updatingUser, validForm.updateDate, validForm.applicationId))
           Redirect(routes.GroupManagement.showGroup(validForm.id.get))
         }
       }
@@ -173,12 +175,31 @@ object GroupManagement extends Controller {
 
   /**
    * Delete a selected group
+   * If the group contains user or permission ,
+   * a message is sent to the user to remove them from the group before deletion
    * @param id The id of the group to delete
    * @return The group index page
    */
-  def deleteGroup(id : Int) = DBAction { implicit request =>
-    groupDao.findById(id).mutate(_.delete)
-    Redirect(routes.GroupManagement.groupIndex())
+  def deleteGroup(id: Int) = DBAction { implicit request =>
+    val permissionGroupListIsEmpty = permissionGroupDao.findPermissions(id).list.isEmpty
+    val userGroupListIsEmpty = userGroupDao.findUsers(id).list.isEmpty
+    if (!permissionGroupListIsEmpty || !userGroupListIsEmpty) {
+      val group = groupDao.findById(id).first
+      val permissions = permissionGroupDao.findPermissions(id).list
+      val users = userGroupDao.findUsers(id).list
+      val listeMessage = {
+        var messages = ListBuffer[String]()
+        if(!permissionGroupListIsEmpty) messages += Messages("groupStillContainsPermissions")
+        if (!userGroupListIsEmpty) messages += Messages("groupStillContainsUsers")
+        messages.toList
+      }
+      val allPermissions = permissionDao.dao.permissions.list
+      BadRequest(groupView(group, Some(permissions), Some(users), Some(allPermissions),Some(listeMessage)))
+    }
+    else {
+      groupDao.findById(id).mutate(_.delete)
+      Redirect(routes.GroupManagement.groupIndex())
+    }
   }
 
   /**
@@ -187,8 +208,8 @@ object GroupManagement extends Controller {
    * @param permissionId The id of the permission we want to add
    * @return The group view with updated data
    */
-  def addPermissionToGroup(groupId : Int,permissionId : Int) = DBAction { implicit request =>
-    permissionGroupDao.dao.permissionsGroups += PermissionGroup(None,permissionId,groupId,new java.sql.Date(new java.util.Date().getTime))
+  def addPermissionToGroup(groupId: Int, permissionId: Int) = DBAction { implicit request =>
+    permissionGroupDao.dao.permissionsGroups += PermissionGroup(None, permissionId, groupId, new java.sql.Date(new java.util.Date().getTime))
     Redirect(routes.GroupManagement.showGroup(groupId))
   }
 
@@ -200,14 +221,14 @@ object GroupManagement extends Controller {
    * @param userUserName The userName of the user
    * @return The group view with data updated.
    */
-  def addUserToGroup(groupId : Int,userLastName : Option[String],userFirstName : Option[String],userUserName : Option[String]) = DBAction {implicit request =>
+  def addUserToGroup(groupId: Int, userLastName: Option[String], userFirstName: Option[String], userUserName: Option[String]) = DBAction { implicit request =>
     val user = {
-      if(userUserName.isDefined && !userUserName.isEmpty) Some(userDao.findByUserName(userUserName.get).first)
-      else if(userLastName.isDefined && !userLastName.isEmpty && userFirstName.isDefined && !userFirstName.isEmpty) Some(userDao.findByUserLastAndFirstName(userLastName.get,userFirstName.get).first)
+      if (userUserName.isDefined && !userUserName.isEmpty) Some(userDao.findByUserName(userUserName.get).first)
+      else if (userLastName.isDefined && !userLastName.isEmpty && userFirstName.isDefined && !userFirstName.isEmpty) Some(userDao.findByUserLastAndFirstName(userLastName.get, userFirstName.get).first)
       else None
     }
-    if(user.isDefined){
-      userGroupDao.dao.usersgroups += UserGroup(None,user.get.id.get,groupId,new java.sql.Date(new java.util.Date().getTime))
+    if (user.isDefined) {
+      userGroupDao.dao.usersgroups += UserGroup(None, user.get.id.get, groupId, new java.sql.Date(new java.util.Date().getTime))
     }
     Redirect(routes.GroupManagement.showGroup(groupId))
   }
@@ -218,8 +239,8 @@ object GroupManagement extends Controller {
    * @param permissionId The id of the permission we want to remove
    * @return The group view with updated data
    */
-  def removePermissionFromGroup(groupId : Int,permissionId : Int) = DBAction {implicit request =>
-    permissionGroupDao.findByPermissionAndGroupIds(permissionId,groupId).mutate(_.delete)
+  def removePermissionFromGroup(groupId: Int, permissionId: Int) = DBAction { implicit request =>
+    permissionGroupDao.findByPermissionAndGroupIds(permissionId, groupId).mutate(_.delete)
     Redirect(routes.GroupManagement.showGroup(groupId))
   }
 
@@ -229,8 +250,8 @@ object GroupManagement extends Controller {
    * @param userId The id of the user we want to remove from the group
    * @return The group view with updated data.
    */
-  def removeUserFromGroup(groupId : Int,userId : Int) = DBAction {implicit request =>
-    userGroupDao.findByUserAndGroupIds(userId,groupId).mutate(_.delete)
+  def removeUserFromGroup(groupId: Int, userId: Int) = DBAction { implicit request =>
+    userGroupDao.findByUserAndGroupIds(userId, groupId).mutate(_.delete)
     Redirect(routes.GroupManagement.showGroup(groupId))
   }
 }

@@ -20,6 +20,7 @@ limitations under the License.
 package controllers.user
 
 import models.dao.fileStorage.documentUserDao
+import models.dao.group.userGroupDao
 import models.dao.user.userDao
 import models.entity.user.User
 import play.api.Play.current
@@ -222,10 +223,13 @@ object UserManagement extends Controller {
 
   /**
    * Delete a user
+   * Also delete all the link on the userTable (userGroup,userDocument,...)
    * @param id The id of the user to delete
    * @return The user search page
    */
   def deleteUser(id: Int) = DBAction { implicit request =>
+    documentUserDao.dao.documentsUsers.filter(_.userId === id).mutate(_.delete)
+    userGroupDao.dao.usersgroups.filter(_.userId === id).mutate(_.delete)
     userDao.dao.users.filter(_.id === id).mutate(_.delete)
     Ok(userManagementView(userForm, None))
   }
